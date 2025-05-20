@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Line Simulation</title>    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-top: 60px;
+            background-color: #f5f5f5;
+            position: relative;
+        }
+        
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #2c5aa0;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #1c4277;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .back-button:before {
+            content: "←";
+            margin-right: 8px;
+            font-size: 18px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        
+        .total-display {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .number-line-container {
+            margin: 30px 0;
+            position: relative;
+            height: 60px;
+            width: 100%;
+        }
+        
+        .number-line {
+            position: relative;
+            height: 4px;
+            background-color: #333;
+            margin: 20px 0;
+        }
+        
+        .tick {
+            position: absolute;
+            width: 2px;
+            height: 10px;
+            background-color: #333;
+            bottom: 0;
+            transform: translateX(-50%);
+        }
+        
+        .tick-label {
+            position: absolute;
+            bottom: -25px;
+            transform: translateX(-50%);
+            font-size: 12px;
+        }
+        
+        .marker {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            bottom: 10px;
+            transform: translateX(-50%);
+            transition: left 0.5s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+        
+        .quiz-container {
+            display: none;
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .quiz-question {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .quiz-option {
+            background-color: #fff;
+            border: 2px solid #999;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+        
+        .quiz-option:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-2px);
+        }
+        
+        .quiz-option.selected {
+            background-color: #b3e5fc;
+            border-color: #0288d1;
+        }
+        
+        .quiz-option.correct {
+            background-color: #d4edda;
+            border-color: #5cb85c;
+        }
+        
+        .quiz-option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .quiz-controls {
+            text-align: center;
+        }
+        
+        .quiz-btn {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .quiz-btn:hover {
+            background-color: #555;
+        }
+        
+        .quiz-btn:disabled {
+            background-color: #999;
+            cursor: not-allowed;
+        }
+        
+        .explanation {
+            display: none;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border-left: 4px solid #0288d1;
+        }
+        
+        .scoreboard {
+            display: none;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .containers {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .chip-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .chip {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            user-select: none;
+        }
+        
+        .chip:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 8px rgba(0,0,0,0.3);
+        }
+        
+        .chip:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+        }
+        
+        .chip.disabled {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        
+        .negative {
+            background-color: #ff5252;
+            color: white;
+        }
+        
+        .positive {
+            background-color: #ffeb3b;
+            color: black;
+        }
+        
+        .bag-container {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+        }
+        
+        .bag {
+            width: 100%;
+            height: 180px;
+            margin: 10px auto;
+            background-color: #fff;
+            border: 3px solid #333;
+            border-radius: 10px 10px 0 0;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .bag-label {
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+        
+        .bag-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            padding: 5px;
+        }
+        
+        .mini-chip {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+            position: absolute;
+            transition: top 0.5s ease, left 0.5s ease;
+        }
+        
+        .actions {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .reset-btn, .quiz-toggle-btn {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 0 10px;
+        }
+        
+        .reset-btn:hover, .quiz-toggle-btn:hover {
+            background-color: #555;
+        }
+        
+        .chip-section {
+            margin: 30px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        @media (max-width: 600px) {
+            .quiz-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .containers {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .bag-container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.close()">Back to Math Page</button>
+    <h1>Number Line Simulation</h1>
+    
+    <div class="total-display" role="status">Total = 0</div>
+    
+    <div class="scoreboard" id="scoreboard" role="status">
+        Score: <span id="score">0</span>
+    </div>
+    
+    <div class="number-line-container">
+        <div class="number-line" role="region" aria-label="Number line"></div>
+        <div class="marker" id="marker" aria-label="Current position marker"></div>
+    </div>
+    
+    <div class="quiz-container" id="quiz-container">
+        <div class="quiz-question" id="quiz-question"></div>
+        <div class="quiz-options" id="quiz-options" role="radiogroup"></div>
+        <div class="explanation" id="explanation"></div>
+        <div class="quiz-controls">
+            <button class="quiz-btn" id="check-answer" disabled aria-label="Check selected answer">Check Answer</button>
+            <button class="quiz-btn" id="next-question" style="display: none;" aria-label="Proceed to next question">Next Question</button>
+        </div>
+    </div>
+    
+    <div class="chip-section">
+        <h2 class="section-title">Click on a number to add it to the appropriate box</h2>
+        
+        <div class="chip-container">
+            <div class="chip negative" data-value="-5" role="button" aria-label="Add negative 5" tabindex="0">-5</div>
+            <div class="chip negative" data-value="-4" role="button" aria-label="Add negative 4" tabindex="0">-4</div>
+            <div class="chip negative" data-value="-3" role="button" aria-label="Add negative 3" tabindex="0">-3</div>
+            <div class="chip negative" data-value="-2" role="button" aria-label="Add negative 2" tabindex="0">-2</div>
+            <div class="chip negative" data-value="-1" role="button" aria-label="Add negative 1" tabindex="0">-1</div>
+            <div class="chip positive" data-value="1" role="button" aria-label="Add positive 1" tabindex="0">+1</div>
+            <div class="chip positive" data-value="2" role="button" aria-label="Add positive 2" tabindex="0">+2</div>
+            <div class="chip positive" data-value="3" role="button" aria-label="Add positive 3" tabindex="0">+3</div>
+            <div class="chip positive" data-value="4" role="button" aria-label="Add positive 4" tabindex="0">+4</div>
+            <div class="chip positive" data-value="5" role="button" aria-label="Add positive 5" tabindex="0">+5</div>
+        </div>
+    </div>
+    
+    <div class="containers">
+        <div class="bag-container">
+            <div class="bag-label">Negatives</div>
+            <div class="bag" id="negative-bag" aria-label="Negative numbers bag">
+                <div class="bag-content" id="negative-content"></div>
+            </div>
+        </div>
+        
+        <div class="bag-container">
+            <div class="bag-label">Positives</div>
+            <div class="bag" id="positive-bag" aria-label="Positive numbers bag">
+                <div class="bag-content" id="positive-content"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="actions">
+        <button class="reset-btn" id="reset-btn" aria-label="Reset simulation">Reset</button>
+        <button class="quiz-toggle-btn" id="quiz-toggle-btn" aria-label="Toggle quiz mode">Quiz Mode: Off</button>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const totalDisplay = document.querySelector('.total-display');
+            const marker = document.getElementById('marker');
+            const numberLine = document.querySelector('.number-line');
+            const chips = document.querySelectorAll('.chip');
+            const negativeBag = document.getElementById('negative-bag');
+            const positiveBag = document.getElementById('positive-bag');
+            const resetBtn = document.getElementById('reset-btn');
+            const quizToggleBtn = document.getElementById('quiz-toggle-btn');
+            const quizContainer = document.getElementById('quiz-container');
+            const quizQuestion = document.getElementById('quiz-question');
+            const quizOptions = document.getElementById('quiz-options');
+            const explanation = document.getElementById('explanation');
+            const checkAnswerBtn = document.getElementById('check-answer');
+            const nextQuestionBtn = document.getElementById('next-question');
+            const scoreboard = document.getElementById('scoreboard');
+            const scoreDisplay = document.getElementById('score');
+            
+            const MIN_VALUE = -50;
+            const MAX_VALUE = 50;
+            const STEP = 1;
+            
+            let total = 0;
+            let chipCounter = 0;
+            let isQuizMode = false;
+            let isAnimating = false;
+            let score = 0;
+            let selectedOptionIndex = null;
+            let correctAnswer = null;
+            let optionElements = [];
+            
+            // Create number line ticks and labels
+            for (let i = MIN_VALUE; i <= MAX_VALUE; i += STEP) {
+                const tick = document.createElement('div');
+                tick.className = 'tick';
+                const percentage = (i - MIN_VALUE) / (MAX_VALUE - MIN_VALUE) * 100;
+                tick.style.left = `${percentage}%`;
+                numberLine.appendChild(tick);
+                
+                if (i % 5 === 0) {
+                    const label = document.createElement('div');
+                    label.className = 'tick-label';
+                    label.textContent = i;
+                    label.style.left = `${percentage}%`;
+                    numberLine.appendChild(label);
+                }
+            }
+            
+            updateMarkerPosition();
+            
+            // Chip click handler
+            function handleChipClick(chip, value) {
+                if (isQuizMode || isAnimating) return;
+                
+                if (total + value < MIN_VALUE || total + value > MAX_VALUE) {
+                    alert(`Cannot add ${value}. Total would be outside the range of ${MIN_VALUE} to ${MAX_VALUE}`);
+                    return;
+                }
+                
+                isAnimating = true;
+                chips.forEach(c => c.classList.add('disabled'));
+                
+                total += value;
+                
+                const chipClone = document.createElement('div');
+                chipClone.className = `mini-chip ${value < 0 ? 'negative' : 'positive'}`;
+                chipClone.textContent = value;
+                chipClone.id = `mini-chip-${chipCounter++}`;
+                
+                const chipRect = chip.getBoundingClientRect();
+                const bagRect = (value < 0 ? negativeBag : positiveBag).getBoundingClientRect();
+                const bodyRect = document.body.getBoundingClientRect();
+                
+                chipClone.style.position = 'absolute';
+                chipClone.style.left = `${chipRect.left - bodyRect.left + chip.offsetWidth/2 - 15}px`;
+                chipClone.style.top = `${chipRect.top - bodyRect.top + chip.offsetHeight/2 - 15}px`;
+                
+                document.body.appendChild(chipClone);
+                
+                setTimeout(() => {
+                    chipClone.style.left = `${bagRect.left - bodyRect.left + Math.random() * (bagRect.width - 30)}px`;
+                    chipClone.style.top = `${bagRect.top - bodyRect.top + Math.random() * (bagRect.height - 30)}px`;
+                    
+                    setTimeout(() => {
+                        document.body.removeChild(chipClone);
+                        
+                        const bagContent = value < 0 ? 
+                            document.getElementById('negative-content') : 
+                            document.getElementById('positive-content');
+                        
+                        const bagChip = document.createElement('div');
+                        bagChip.className = `mini-chip ${value < 0 ? 'negative' : 'positive'}`;
+                        bagChip.textContent = value;
+                        bagContent.appendChild(bagChip);
+                        
+                        updateTotalDisplay();
+                        updateMarkerPosition();
+                        isAnimating = false;
+                        chips.forEach(c => c.classList.remove('disabled'));
+                    }, 500);
+                }, 10);
+            }
+            
+            // Add event listeners to chips
+            chips.forEach(chip => {
+                const value = parseInt(chip.getAttribute('data-value'));
+                chip.addEventListener('click', () => handleChipClick(chip, value));
+                chip.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleChipClick(chip, value);
+                    }
+                });
+            });
+            
+            // Reset button
+            resetBtn.addEventListener('click', function() {
+                total = 0;
+                document.getElementById('negative-content').innerHTML = '';
+                document.getElementById('positive-content').innerHTML = '';
+                updateTotalDisplay();
+                updateMarkerPosition();
+                if (isQuizMode) {
+                    quizToggleBtn.click();
+                }
+            });
+            
+            // Quiz mode toggle
+            quizToggleBtn.addEventListener('click', function() {
+                isQuizMode = !isQuizMode;
+                quizToggleBtn.textContent = `Quiz Mode: ${isQuizMode ? 'On' : 'Off'}`;
+                
+                if (isQuizMode) {
+                    quizContainer.style.display = 'block';
+                    scoreboard.style.display = 'block';
+                    totalDisplay.style.display = 'none';
+                    chips.forEach(c => c.classList.add('disabled'));
+                    resetBtn.disabled = true;
+                    generateQuizQuestion();
+                } else {
+                    quizContainer.style.display = 'none';
+                    scoreboard.style.display = 'none';
+                    totalDisplay.style.display = 'block';
+                    chips.forEach(c => c.classList.remove('disabled'));
+                    resetBtn.disabled = false;
+                    resetBtn.click();
+                }
+            });
+            
+            function updateTotalDisplay() {
+                totalDisplay.textContent = `Total = ${total}`;
+            }
+            
+            function updateMarkerPosition() {
+                const percentage = Math.max(0, Math.min(100, (total - MIN_VALUE) / (MAX_VALUE - MIN_VALUE) * 100));
+                marker.style.left = `${percentage}%`;
+                
+                marker.style.backgroundColor = total < 0 ? '#ff5252' : total > 0 ? '#ffeb3b' : '#4CAF50';
+            }
+            
+            function generateQuizQuestion() {
+                explanation.style.display = 'none';
+                checkAnswerBtn.disabled = true;
+                checkAnswerBtn.style.display = 'block';
+                nextQuestionBtn.style.display = 'none';
+                selectedOptionIndex = null;
+                quizOptions.innerHTML = '';
+                optionElements = [];
+                
+                // Generate a random sequence of 2-4 numbers
+                const sequenceLength = Math.floor(Math.random() * 3) + 2;
+                const possibleValues = [-5, -4, -3, -2, -1, 1, 2, 3, 4, 5];
+                const sequence = [];
+                let tempTotal = 0;
+                
+                for (let i = 0; i < sequenceLength; i++) {
+                    const value = possibleValues[Math.floor(Math.random() * possibleValues.length)];
+                    if (tempTotal + value >= MIN_VALUE && tempTotal + value <= MAX_VALUE) {
+                        sequence.push(value);
+                        tempTotal += value;
+                    }
+                }
+                
+                correctAnswer = tempTotal;
+                quizQuestion.textContent = `What is the final position on the number line after adding: ${sequence.join(', ')}?`;
+                
+                // Generate multiple-choice options
+                const options = [correctAnswer];
+                while (options.length < 4) {
+                    const offset = Math.floor(Math.random() * 11) - 5;
+                    const wrongAnswer = correctAnswer + offset;
+                    if (!options.includes(wrongAnswer) && wrongAnswer >= MIN_VALUE && wrongAnswer <= MAX_VALUE) {
+                        options.push(wrongAnswer);
+                    }
+                }
+                options.sort(() => Math.random() - 0.5);
+                
+                options.forEach((option, index) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'quiz-option';
+                    optionElement.textContent = option;
+                    optionElement.dataset.index = index;
+                    optionElement.dataset.value = option;
+                    optionElement.tabIndex = 0;
+                    optionElement.setAttribute('role', 'radio');
+                    optionElement.setAttribute('aria-checked', 'false');
+                    
+                    optionElement.addEventListener('click', () => {
+                        optionElements.forEach(el => {
+                            el.classList.remove('selected');
+                            el.setAttribute('aria-checked', 'false');
+                        });
+                        optionElement.classList.add('selected');
+                        optionElement.setAttribute('aria-checked', 'true');
+                        selectedOptionIndex = index;
+                        checkAnswerBtn.disabled = false;
+                    });
+                    
+                    optionElement.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            optionElement.click();
+                        }
+                    });
+                    
+                    quizOptions.appendChild(optionElement);
+                    optionElements.push(optionElement);
+                });
+                
+                // Animate the sequence
+                total = 0;
+                document.getElementById('negative-content').innerHTML = '';
+                document.getElementById('positive-content').innerHTML = '';
+                updateMarkerPosition();
+                
+                let index = 0;
+                function animateNextChip() {
+                    if (index >= sequence.length) {
+                        optionElements[0].focus();
+                        return;
+                    }
+                    
+                    const value = sequence[index];
+                    const chip = Array.from(chips).find(c => parseInt(c.dataset.value) === value);
+                    isAnimating = true;
+                    
+                    const chipClone = document.createElement('div');
+                    chipClone.className = `mini-chip ${value < 0 ? 'negative' : 'positive'}`;
+                    chipClone.textContent = value;
+                    chipClone.id = `mini-chip-${chipCounter++}`;
+                    
+                    const chipRect = chip.getBoundingClientRect();
+                    const bagRect = (value < 0 ? negativeBag : positiveBag).getBoundingClientRect();
+                    const bodyRect = document.body.getBoundingClientRect();
+                    
+                    chipClone.style.position = 'absolute';
+                    chipClone.style.left = `${chipRect.left - bodyRect.left + chip.offsetWidth/2 - 15}px`;
+                    chipClone.style.top = `${chipRect.top - bodyRect.top + chip.offsetHeight/2 - 15}px`;
+                    
+                    document.body.appendChild(chipClone);
+                    
+                    setTimeout(() => {
+                        chipClone.style.left = `${bagRect.left - bodyRect.left + Math.random() * (bagRect.width - 30)}px`;
+                        chipClone.style.top = `${bagRect.top - bodyRect.top + Math.random() * (bagRect.height - 30)}px`;
+                        
+                        setTimeout(() => {
+                            document.body.removeChild(chipClone);
+                            
+                            const bagContent = value < 0 ? 
+                                document.getElementById('negative-content') : 
+                                document.getElementById('positive-content');
+                            
+                            const bagChip = document.createElement('div');
+                            bagChip.className = `mini-chip ${value < 0 ? 'negative' : 'positive'}`;
+                            bagChip.textContent = value;
+                            bagContent.appendChild(bagChip);
+                            
+                            total += value;
+                            updateMarkerPosition();
+                            isAnimating = false;
+                            index++;
+                            animateNextChip();
+                        }, 500);
+                    }, 10);
+                }
+                
+                animateNextChip();
+            }
+            
+            checkAnswerBtn.addEventListener('click', () => {
+                if (selectedOptionIndex === null) return;
+                
+                const selectedOption = optionElements[selectedOptionIndex];
+                const selectedValue = parseInt(selectedOption.dataset.value);
+                
+                optionElements.forEach(option => {
+                    option.classList.remove('correct', 'incorrect');
+                    if (parseInt(option.dataset.value) === correctAnswer) {
+                        option.classList.add('correct');
+                    }
+                });
+                
+                if (selectedValue === correctAnswer) {
+                    score += 10;
+                    scoreDisplay.textContent = score;
+                    explanation.innerHTML = `<strong>Correct!</strong> The sequence sums to ${correctAnswer}.`;
+                } else {
+                    selectedOption.classList.add('incorrect');
+                    explanation.innerHTML = `<strong>Incorrect.</strong> The sequence sums to ${correctAnswer}.`;
+                }
+                
+                explanation.style.display = 'block';
+                checkAnswerBtn.style.display = 'none';
+                nextQuestionBtn.style.display = 'block';
+                optionElements.forEach(option => {
+                    option.style.pointerEvents = 'none';
+                    option.setAttribute('aria-disabled', 'true');
+                });
+                nextQuestionBtn.focus();
+            });
+            
+            nextQuestionBtn.addEventListener('click', generateQuizQuestion);
+            
+            updateTotalDisplay();
+        });
+    </script>
+</body>
+</html>
