@@ -16,9 +16,6 @@ const Header = () => {
       <nav className="nav">
         {isAuthenticated ? (
           <>
-            <Link to="/math" className="btn">Math</Link>
-            <Link to="/physics" className="btn">Physics</Link>
-            <Link to="/chemistry" className="btn">Chemistry</Link>
             <Link to="/research-desk" className="btn">Research Desk</Link>
             <button onClick={logout} className="btn">Logout</button>
           </>
@@ -26,6 +23,7 @@ const Header = () => {
           <>
             <Link to="/signup" className="btn">Sign Up</Link>
             <Link to="/login" className="btn">Login</Link>
+            <Link to="/research-desk" className="btn">Research Desk</Link>
           </>
         )}
       </nav>
