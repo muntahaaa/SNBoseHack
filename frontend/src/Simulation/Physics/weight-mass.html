@@ -4,12 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AR Weight Simulation Prototype</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>    <style>
         body {
             margin: 0;
             overflow: hidden;
             font-family: Arial, sans-serif;
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #2c5aa0;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            background-color: #1c4277;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .back-button:before {
+            content: "←";
+            margin-right: 8px;
+            font-size: 18px;
         }
         #canvas {
             width: 100%;
@@ -29,8 +59,8 @@
             flex-direction: column;
             align-items: center;
             gap: 10px;
-            width: 80%;
-            max-width: 600px;
+            width: 90%;
+            max-width: 500px;
         }
         #object-selector {
             display: flex;
@@ -50,6 +80,10 @@
         }
         .object-btn:hover {
             background-color: #3e8e41;
+        }
+        .object-btn:disabled {
+            background-color: #999;
+            cursor: not-allowed;
         }
         #gravity-control {
             width: 100%;
@@ -78,33 +112,159 @@
             font-size: 16px;
             margin-top: 5px;
         }
+        .preset-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            margin-top: 10px;
+        }
+        #quiz-container {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 10px;
+        }
+        #quiz-question {
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        #quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .quiz-option {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 2px solid #fff;
+            padding: 8px;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        .quiz-option:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .quiz-option.selected {
+            background-color: rgba(33, 150, 243, 0.5);
+            border-color: #2196f3;
+        }
+        .quiz-option.correct {
+            background-color: rgba(76, 175, 80, 0.5);
+            border-color: #4caf50;
+        }
+        .quiz-option.incorrect {
+            background-color: rgba(244, 67, 54, 0.5);
+            border-color: #f44336;
+        }
+        #quiz-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .quiz-btn {
+            padding: 8px 12px;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .quiz-btn:hover {
+            background-color: #3e8e41;
+        }
+        .quiz-btn:disabled {
+            background-color: #999;
+            cursor: not-allowed;
+        }
+        #explanation {
+            display: none;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+        #scoreboard {
+            display: none;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        @media (max-width: 600px) {
+            #ui-panel {
+                width: 95%;
+                padding: 10px;
+            }
+            #quiz-options {
+                grid-template-columns: 1fr;
+            }
+            .object-btn, .quiz-btn {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+        }
     </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
+    <canvas id="canvas" aria-label="3D weight simulation canvas"></canvas>
     
     <div id="ui-panel">
         <div id="object-selector">
-            <button class="object-btn" data-mass="1">1kg Block</button>
-            <button class="object-btn" data-mass="2">2kg Block</button>
-            <button class="object-btn" data-mass="5">5kg Block</button>
-            <button class="object-btn" data-mass="10">10kg Block</button>
+            <button class="object-btn" data-mass="1" role="button" aria-label="Select 1kg block">1kg Block</button>
+            <button class="object-btn" data-mass="2" role="button" aria-label="Select 2kg block">2kg Block</button>
+            <button class="object-btn" data-mass="5" role="button" aria-label="Select 5kg block">5kg Block</button>
+            <button class="object-btn" data-mass="10" role="button" aria-label="Select 10kg block">10kg Block</button>
         </div>
         
         <div id="gravity-control">
             <span>Gravity:</span>
-            <input type="range" id="gravity-slider" min="0" max="20" step="0.1" value="9.8">
+            <input type="range" id="gravity-slider" min="0" max="20" step="0.1" value="9.8" aria-label="Adjust gravity">
             <span id="gravity-value">9.8 m/s²</span>
+        </div>
+        
+        <div class="preset-buttons">
+            <!-- Populated dynamically -->
         </div>
         
         <div id="location-text">Location: Earth</div>
         
-        <div id="scale-display">0.0 N</div>
+        <div id="scale-display" role="status">0.0 N</div>
+        
+        <div id="scoreboard" role="status">
+            Score: <span id="score">0</span>
+        </div>
+        
+        <div id="quiz-container">
+            <div id="quiz-question"></div>
+            <div id="quiz-options" role="radiogroup"></div>
+            <div id="explanation"></div>
+            <div id="quiz-controls">
+                <button class="quiz-btn" id="check-answer" disabled aria-label="Check selected answer">Check Answer</button>
+                <button class="quiz-btn" id="next-question" style="display: none;" aria-label="Proceed to next question">Next Question</button>
+            </div>
+        </div>
         
         <div id="info-text">
             Weight = Mass × Gravity<br>
             Select a block and place it on the scale to see its weight
         </div>
+        
+        <button class="quiz-btn" id="quiz-toggle-btn" style="margin-top: 10px;" aria-label="Toggle quiz mode">Quiz Mode: Off</button>
     </div>
 
     <script>
@@ -134,21 +294,18 @@
         function createScale() {
             const scaleGroup = new THREE.Group();
             
-            // Base
             const baseGeometry = new THREE.BoxGeometry(3, 0.2, 3);
             const baseMaterial = new THREE.MeshPhongMaterial({ color: 0x444444 });
             const base = new THREE.Mesh(baseGeometry, baseMaterial);
             base.position.y = -0.1;
             scaleGroup.add(base);
             
-            // Platform
             const platformGeometry = new THREE.BoxGeometry(2.5, 0.1, 2.5);
             const platformMaterial = new THREE.MeshPhongMaterial({ color: 0x999999 });
             const platform = new THREE.Mesh(platformGeometry, platformMaterial);
             platform.position.y = 0.2;
             scaleGroup.add(platform);
             
-            // Display panel
             const displayGeometry = new THREE.BoxGeometry(1.5, 0.5, 0.1);
             const displayMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
             const display = new THREE.Mesh(displayGeometry, displayMaterial);
@@ -163,26 +320,20 @@
         
         // Create blocks of different masses
         function createBlock(mass) {
-            // Size based on mass (cube root relationship for volume)
             const size = Math.pow(mass, 1/3) * 0.8;
-            
             const geometry = new THREE.BoxGeometry(size, size, size);
             
-            // Color based on mass
             let color;
-            if (mass === 1) color = 0x6a0dad; // purple
-            else if (mass === 2) color = 0x0000ff; // blue
-            else if (mass === 5) color = 0xff4500; // orange
-            else if (mass === 10) color = 0xff0000; // red
-            else color = 0x00ff00; // default green
+            if (mass === 1) color = 0x6a0dad;
+            else if (mass === 2) color = 0x0000ff;
+            else if (mass === 5) color = 0xff4500;
+            else if (mass === 10) color = 0xff0000;
+            else color = 0x00ff00;
             
             const material = new THREE.MeshPhongMaterial({ color });
             const block = new THREE.Mesh(geometry, material);
             
-            // Position above the scale
             block.position.y = size/2 + 0.3;
-            
-            // Store the mass as a property
             block.userData.mass = mass;
             
             return block;
@@ -190,55 +341,69 @@
         
         // Variables for simulation
         let currentBlock = null;
-        let gravity = 9.8; // m/s²
+        let gravity = 9.8;
         let isDragging = false;
         let isOnScale = false;
+        let isQuizMode = false;
+        let isAnimating = false;
+        let score = 0;
+        let selectedOptionIndex = null;
+        let correctAnswer = null;
+        let optionElements = [];
+        
+        // UI elements
+        const gravitySlider = document.getElementById('gravity-slider');
+        const gravityValue = document.getElementById('gravity-value');
+        const locationText = document.getElementById('location-text');
+        const scaleDisplay = document.getElementById('scale-display');
+        const quizToggleBtn = document.getElementById('quiz-toggle-btn');
+        const quizContainer = document.getElementById('quiz-container');
+        const quizQuestion = document.getElementById('quiz-question');
+        const quizOptions = document.getElementById('quiz-options');
+        const explanation = document.getElementById('explanation');
+        const checkAnswerBtn = document.getElementById('check-answer');
+        const nextQuestionBtn = document.getElementById('next-question');
+        const scoreboard = document.getElementById('scoreboard');
+        const scoreDisplay = document.getElementById('score');
         
         // Event listeners for object selection
+        function selectBlock(mass) {
+            if (isQuizMode || isAnimating) return;
+            
+            if (currentBlock) {
+                scene.remove(currentBlock);
+            }
+            
+            currentBlock = createBlock(mass);
+            scene.add(currentBlock);
+            
+            updateWeightDisplay(0);
+            isOnScale = false;
+        }
+        
         document.querySelectorAll('.object-btn').forEach(button => {
             button.addEventListener('click', () => {
                 const mass = parseFloat(button.dataset.mass);
-                
-                // Remove previous block if exists
-                if (currentBlock) {
-                    scene.remove(currentBlock);
+                selectBlock(mass);
+            });
+            button.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    const mass = parseFloat(button.dataset.mass);
+                    selectBlock(mass);
                 }
-                
-                // Create and add new block
-                currentBlock = createBlock(mass);
-                scene.add(currentBlock);
-                
-                // Reset weight display
-                updateWeightDisplay(0);
-                isOnScale = false;
             });
         });
         
         // Gravity slider
-        const gravitySlider = document.getElementById('gravity-slider');
-        const gravityValue = document.getElementById('gravity-value');
-        const locationText = document.getElementById('location-text');
-        
         gravitySlider.addEventListener('input', () => {
+            if (isQuizMode) return;
+            
             gravity = parseFloat(gravitySlider.value);
             gravityValue.textContent = gravity.toFixed(1) + ' m/s²';
             
-            // Update location text based on gravity
-            if (gravity === 9.8) {
-                locationText.textContent = 'Location: Earth';
-            } else if (gravity === 1.6) {
-                locationText.textContent = 'Location: Moon';
-            } else if (gravity === 3.7) {
-                locationText.textContent = 'Location: Mars';
-            } else if (gravity === 8.9) {
-                locationText.textContent = 'Location: Venus';
-            } else if (gravity === 24.8) {
-                locationText.textContent = 'Location: Jupiter';
-            } else {
-                locationText.textContent = 'Location: Custom';
-            }
+            updateLocationText();
             
-            // Update weight display if there's a block on the scale
             if (isOnScale && currentBlock) {
                 const mass = currentBlock.userData.mass;
                 const weight = mass * gravity;
@@ -246,7 +411,7 @@
             }
         });
         
-        // Common preset gravities
+        // Preset gravities
         const presetButtons = [
             { value: 1.6, label: 'Moon (1.6 m/s²)' },
             { value: 3.7, label: 'Mars (3.7 m/s²)' },
@@ -254,23 +419,17 @@
             { value: 24.8, label: 'Jupiter (24.8 m/s²)' }
         ];
         
-        // Create preset buttons
-        const gravityControl = document.getElementById('gravity-control');
-        const presetsDiv = document.createElement('div');
-        presetsDiv.style.display = 'flex';
-        presetsDiv.style.gap = '5px';
-        presetsDiv.style.flexWrap = 'wrap';
-        presetsDiv.style.justifyContent = 'center';
-        presetsDiv.style.width = '100%';
-        presetsDiv.style.marginTop = '10px';
-        
+        const presetsDiv = document.querySelector('.preset-buttons');
         presetButtons.forEach(preset => {
             const btn = document.createElement('button');
             btn.textContent = preset.label.split(' ')[0];
             btn.className = 'object-btn';
             btn.style.fontSize = '12px';
             btn.style.padding = '5px 8px';
+            btn.setAttribute('role', 'button');
+            btn.setAttribute('aria-label', `Set gravity to ${preset.label}`);
             btn.addEventListener('click', () => {
+                if (isQuizMode) return;
                 gravitySlider.value = preset.value;
                 gravity = preset.value;
                 gravityValue.textContent = gravity.toFixed(1) + ' m/s²';
@@ -282,34 +441,40 @@
                     updateWeightDisplay(weight);
                 }
             });
+            btn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    btn.click();
+                }
+            });
             presetsDiv.appendChild(btn);
         });
         
-        document.getElementById('ui-panel').insertBefore(presetsDiv, document.getElementById('scale-display'));
-        
-        // Update the weight display
-        function updateWeightDisplay(weight) {
-            const display = document.getElementById('scale-display');
-            display.textContent = weight.toFixed(1) + ' N';
-            
-            // Visual feedback - change color based on weight
-            if (weight === 0) {
-                display.style.color = 'white';
-            } else if (weight < 10) {
-                display.style.color = '#99ff99';
-            } else if (weight < 50) {
-                display.style.color = '#ffff99';
+        function updateLocationText() {
+            if (gravity === 9.8) {
+                locationText.textContent = 'Location: Earth';
+            } else if (gravity === 1.6) {
+                locationText.textContent = 'Location: Moon';
+            } else if (gravity === 3.7) {
+                locationText.textContent = 'Location: Mars';
+            } else if (gravity === 24.8) {
+                locationText.textContent = 'Location: Jupiter';
             } else {
-                display.style.color = '#ff9999';
+                locationText.textContent = 'Location: Custom';
             }
         }
         
-        // Simple drag and drop for the cube
+        function updateWeightDisplay(weight) {
+            scaleDisplay.textContent = weight.toFixed(1) + ' N';
+            
+            scaleDisplay.style.color = weight === 0 ? 'white' : weight < 10 ? '#99ff99' : weight < 50 ? '#ffff99' : '#ff9999';
+        }
+        
+        // Drag and drop
         canvas.addEventListener('mousedown', onMouseDown);
         canvas.addEventListener('mousemove', onMouseMove);
         canvas.addEventListener('mouseup', onMouseUp);
         
-        // Touch events for mobile
         canvas.addEventListener('touchstart', e => {
             e.preventDefault();
             onMouseDown({
@@ -328,12 +493,11 @@
         
         canvas.addEventListener('touchend', onMouseUp);
         
-        // Raycaster for object interaction
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
         
         function onMouseDown(event) {
-            if (!currentBlock) return;
+            if (isQuizMode || isAnimating) return;
             
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -343,14 +507,13 @@
             
             if (intersects.length > 0) {
                 isDragging = true;
-                // Reset position
                 isOnScale = false;
                 updateWeightDisplay(0);
             }
         }
         
         function onMouseMove(event) {
-            if (!isDragging || !currentBlock) return;
+            if (!isDragging || !currentBlock || isQuizMode) return;
             
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -360,15 +523,12 @@
             const point = new THREE.Vector3();
             raycaster.ray.intersectPlane(plane, point);
             
-            // Update position but maintain height
             currentBlock.position.x = point.x;
             currentBlock.position.z = point.z;
             
-            // Keep the block above the ground
             const blockSize = Math.pow(currentBlock.userData.mass, 1/3) * 0.8;
             currentBlock.position.y = blockSize/2 + 0.3;
             
-            // Check if block is above scale
             const distanceToScaleCenter = Math.sqrt(
                 Math.pow(currentBlock.position.x, 2) +
                 Math.pow(currentBlock.position.z, 2)
@@ -382,19 +542,15 @@
             isDragging = false;
             
             if (isOnScale && currentBlock) {
-                // Place block on scale
                 const mass = currentBlock.userData.mass;
                 const weight = mass * gravity;
                 updateWeightDisplay(weight);
-                
-                // Animate the scale with a subtle "weighing" effect
                 animateScale();
             } else {
                 updateWeightDisplay(0);
             }
         }
         
-        // Animate the scale when placing an object
         function animateScale() {
             const originalY = platform.position.y;
             const frames = 20;
@@ -402,10 +558,8 @@
             
             function animate() {
                 if (frame <= frames) {
-                    // Simple spring animation
                     const displacement = 0.1 * Math.sin(frame / frames * Math.PI) * Math.exp(-frame / frames * 3);
                     platform.position.y = originalY - displacement;
-                    
                     frame++;
                     requestAnimationFrame(animate);
                 } else {
@@ -415,6 +569,170 @@
             
             animate();
         }
+        
+        // Quiz mode toggle
+        quizToggleBtn.addEventListener('click', () => {
+            isQuizMode = !isQuizMode;
+            quizToggleBtn.textContent = `Quiz Mode: ${isQuizMode ? 'On' : 'Off'}`;
+            
+            if (isQuizMode) {
+                quizContainer.style.display = 'block';
+                scoreboard.style.display = 'block';
+                scaleDisplay.style.display = 'none';
+                document.querySelectorAll('.object-btn').forEach(btn => btn.disabled = true);
+                gravitySlider.disabled = true;
+                if (currentBlock) {
+                    scene.remove(currentBlock);
+                    currentBlock = null;
+                }
+                updateWeightDisplay(0);
+                generateQuizQuestion();
+            } else {
+                quizContainer.style.display = 'none';
+                scoreboard.style.display = 'none';
+                scaleDisplay.style.display = 'block';
+                document.querySelectorAll('.object-btn').forEach(btn => btn.disabled = false);
+                gravitySlider.disabled = false;
+                updateWeightDisplay(0);
+                if (currentBlock) {
+                    scene.remove(currentBlock);
+                    currentBlock = null;
+                }
+            }
+        });
+        
+        function generateQuizQuestion() {
+            explanation.style.display = 'none';
+            checkAnswerBtn.disabled = true;
+            checkAnswerBtn.style.display = 'block';
+            nextQuestionBtn.style.display = 'none';
+            selectedOptionIndex = null;
+            quizOptions.innerHTML = '';
+            optionElements = [];
+            
+            // Randomly select mass and gravity
+            const masses = [1, 2, 5, 10];
+            const gravities = [1.6, 3.7, 9.8, 24.8];
+            const mass = masses[Math.floor(Math.random() * masses.length)];
+            const gravityValue = gravities[Math.floor(Math.random() * gravities.length)];
+            
+            correctAnswer = (mass * gravityValue).toFixed(1);
+            const location = gravityValue === 9.8 ? 'Earth' : gravityValue === 1.6 ? 'Moon' : gravityValue === 3.7 ? 'Mars' : 'Jupiter';
+            quizQuestion.textContent = `What is the weight of a ${mass}kg block on ${location} (gravity = ${gravityValue} m/s²)?`;
+            
+            // Generate multiple-choice options
+            const options = [parseFloat(correctAnswer)];
+            while (options.length < 4) {
+                const offset = (Math.random() * 10 - 5).toFixed(1);
+                const wrongAnswer = (parseFloat(correctAnswer) + parseFloat(offset)).toFixed(1);
+                if (!options.includes(parseFloat(wrongAnswer)) && parseFloat(wrongAnswer) >= 0) {
+                    options.push(parseFloat(wrongAnswer));
+                }
+            }
+            options.sort(() => Math.random() - 0.5);
+            
+            options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'quiz-option';
+                optionElement.textContent = `${option.toFixed(1)} N`;
+                optionElement.dataset.index = index;
+                optionElement.dataset.value = option.toFixed(1);
+                optionElement.tabIndex = 0;
+                optionElement.setAttribute('role', 'radio');
+                optionElement.setAttribute('aria-checked', 'false');
+                
+                optionElement.addEventListener('click', () => {
+                    optionElements.forEach(el => {
+                        el.classList.remove('selected');
+                        el.setAttribute('aria-checked', 'false');
+                    });
+                    optionElement.classList.add('selected');
+                    optionElement.setAttribute('aria-checked', 'true');
+                    selectedOptionIndex = index;
+                    checkAnswerBtn.disabled = false;
+                });
+                
+                optionElement.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        optionElement.click();
+                    }
+                });
+                
+                quizOptions.appendChild(optionElement);
+                optionElements.push(optionElement);
+            });
+            
+            // Animate block placement
+            if (currentBlock) {
+                scene.remove(currentBlock);
+            }
+            currentBlock = createBlock(mass);
+            scene.add(currentBlock);
+            
+            isAnimating = true;
+            gravity = gravityValue;
+            gravitySlider.value = gravity;
+            gravityValue.textContent = gravity.toFixed(1) + ' m/s²';
+            updateLocationText();
+            
+            // Animate block moving to scale
+            const targetPosition = { x: 0, z: 0 };
+            const startPosition = { x: 2, z: 2 };
+            currentBlock.position.set(startPosition.x, currentBlock.position.y, startPosition.z);
+            
+            let t = 0;
+            function animateBlock() {
+                if (t <= 1) {
+                    t += 0.02;
+                    currentBlock.position.x = startPosition.x + (targetPosition.x - startPosition.x) * t;
+                    currentBlock.position.z = startPosition.z + (targetPosition.z - startPosition.z) * t;
+                    requestAnimationFrame(animateBlock);
+                } else {
+                    isOnScale = true;
+                    const weight = mass * gravity;
+                    updateWeightDisplay(weight);
+                    animateScale();
+                    isAnimating = false;
+                    optionElements[0].focus();
+                }
+            }
+            animateBlock();
+        }
+        
+        checkAnswerBtn.addEventListener('click', () => {
+            if (selectedOptionIndex === null) return;
+            
+            const selectedOption = optionElements[selectedOptionIndex];
+            const selectedValue = parseFloat(selectedOption.dataset.value);
+            
+            optionElements.forEach(option => {
+                option.classList.remove('correct', 'incorrect');
+                if (parseFloat(option.dataset.value) === parseFloat(correctAnswer)) {
+                    option.classList.add('correct');
+                }
+            });
+            
+            if (selectedValue === parseFloat(correctAnswer)) {
+                score += 10;
+                scoreDisplay.textContent = score;
+                explanation.innerHTML = `<strong>Correct!</strong> Weight = ${currentBlock.userData.mass} kg × ${gravity} m/s² = ${correctAnswer} N.`;
+            } else {
+                selectedOption.classList.add('incorrect');
+                explanation.innerHTML = `<strong>Incorrect.</strong> Weight = ${currentBlock.userData.mass} kg × ${gravity} m/s² = ${correctAnswer} N.`;
+            }
+            
+            explanation.style.display = 'block';
+            checkAnswerBtn.style.display = 'none';
+            nextQuestionBtn.style.display = 'block';
+            optionElements.forEach(option => {
+                option.style.pointerEvents = 'none';
+                option.setAttribute('aria-disabled', 'true');
+            });
+            nextQuestionBtn.focus();
+        });
+        
+        nextQuestionBtn.addEventListener('click', generateQuizQuestion);
         
         // Handle window resize
         window.addEventListener('resize', () => {

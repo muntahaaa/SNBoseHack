@@ -14,10 +14,10 @@ import './styles/SubjectPage.css';
 import Home from './components/Home';
 import Login from './components/Login';
 import Signup from './components/Signup';
-import ResearchDesk from './components/ResearchDesk';
-import MathPage from './components/MathPage';
-import PhysicsPage from './components/PhysicsPage';
-import ChemistryPage from './components/ChemistryPage';
+import ResearchDesk from './components/pages/ResearchDesk';
+import MathPage from './components/pages/MathPage';
+import PhysicsPage from './components/pages/PhysicsPage';
+import ChemistryPage from './components/pages/ChemistryPage';
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
