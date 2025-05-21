@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
-;
+
 
 
 // Load environment variables
@@ -12,7 +12,8 @@ dotenv.config();
 // Import routes
 const authRoutes = require('./routes/authRoutes');
 const researchRoutes = require('./routes/researchRoutes');
-const chatRoutes = require('./routes/chatRoutes')
+const chatRoutes = require('./routes/chatRoutes');
+const ttsRoutes = require("./routes/ttsRoutes");
 // Initialize Express app
 
 const app = express();
@@ -34,6 +35,7 @@ app.use('/videos', express.static(path.join(__dirname, 'public', 'videos')));
 app.use('/api/users', authRoutes);
 app.use('/api/research-desk', researchRoutes);
 app.use('/api', chatRoutes);
+app.use('/api', ttsRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
