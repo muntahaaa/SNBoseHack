@@ -424,6 +424,41 @@
             margin-right: 8px;
             font-size: 18px;
         }
+
+        #learnButton {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        #learnButton:hover {
+            background-color: #45a049;
+        }
+
+        #popup {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        #popup button {
+            background-color: #f44336;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: block;
+            margin-left: auto;
+        }
+
+        #popup button:hover {
+            background-color: #d32f2f;
+        }
         
         @keyframes moveArrow {
             0% { left: 20%; opacity: 0.8; }
@@ -466,6 +501,7 @@
     </style>
 </head>
 <body>
+    <button id="learnButton" style="position: fixed; bottom: 40px; right: 60px; z-index: 1000;">এসো ওহমের সূত্র শিখি</button>
     <button class="back-button" onclick="window.close()">Back to Physics Page</button>
     <div class="container">
         <div class="top-section">
@@ -877,6 +913,20 @@
                 quizToggleBtn.click();
             }
         }
+
+        function showPopup() {
+        document.getElementById('popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        document.getElementById('learnButton').addEventListener('click', showPopup);
+
     </script>
+    <div id="popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border: 1px solid black; z-index: 1001; max-width: 500px; text-align: justify;">
+    <p>ওহমের সূত্র বৈদ্যুতিক বর্তনীতে ব্যবহৃত একটি গুরুত্বপূর্ণ নিয়ম, যা জার্মান বিজ্ঞানী জর্জ সাইমন ওহম প্রস্তাব করেন। এই সূত্র অনুযায়ী, একটি পরিবাহকের দুই প্রান্তের বিভব পার্থক্য (V) এবং তাতে প্রবাহিত কারেন্টের পরিমাণ (I) পরস্পরের সমানুপাতিক, যদি তাপমাত্রা এবং অন্যান্য শারীরিক অবস্থা অপরিবর্তিত থাকে। সূত্রটি হলো: V = I × R, যেখানে V হলো বিভব পার্থক্য (ভোল্টে), I হলো কারেন্ট বা বিদ্যুৎপ্রবাহ (অ্যাম্পিয়ারে), এবং R হলো প্রতিবন্ধকতা বা রেজিস্ট্যান্স (ওহমে)। এই সূত্রের সাহায্যে আমরা সহজেই জানতে পারি কোনো বৈদ্যুতিক যন্ত্রে কতটা বিদ্যুৎপ্রবাহ প্রবাহিত হচ্ছে বা তার প্রতিবন্ধকতা কত।</p>
+    <button onclick="closePopup()">বন্ধ করুন</button>
 </body>
 </html>

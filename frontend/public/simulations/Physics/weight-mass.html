@@ -207,6 +207,42 @@
             border-radius: 5px;
             margin-top: 10px;
         }
+
+#learnButton {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        #learnButton:hover {
+            background-color: #45a049;
+        }
+
+        #popup {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        #popup button {
+            background-color: #f44336;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: block;
+            margin-left: auto;
+        }
+
+        #popup button:hover {
+            background-color: #d32f2f;
+        }
+
         @media (max-width: 600px) {
             #ui-panel {
                 width: 95%;
@@ -223,6 +259,7 @@
     </style>
 </head>
 <body>
+    <button id="learnButton" style="position: fixed; bottom: 40px; right: 60px; z-index: 1000;">এসো ভর ও ওজন শিখি</button>
     <button class="back-button" onclick="window.close()">Back to Physics Page</button>
     <canvas id="canvas" aria-label="3D weight simulation canvas"></canvas>
     
@@ -751,6 +788,20 @@
         }
         
         animate();
+
+        function showPopup() {
+        document.getElementById('popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        document.getElementById('learnButton').addEventListener('click', showPopup);
+
     </script>
+    <div id="popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border: 1px solid black; z-index: 1001; max-width: 500px; text-align: justify;">
+    <p>ভর ও ওজন একে অপরের সাথে সম্পর্কিত হলেও ভিন্ন জিনিস। ভর হলো কোনো বস্তুর মধ্যে থাকা পদার্থের পরিমাণ, যা কখনোই পরিবর্তন হয় না এবং একক হিসেবে কিলোগ্রাম (kg) ব্যবহার করা হয়। অন্যদিকে ওজন হলো ভরের ওপর মাধ্যাকর্ষণ বলের প্রভাব, অর্থাৎ কোনো বস্তু পৃথিবী বা অন্য কোনো গ্রহ তাকে যত জোরে টানে, সেটাই তার ওজন, যার একক নিউটন (N)। ওজন পরিবর্তনশীল, কারণ এটি মাধ্যাকর্ষণ শক্তির ওপর নির্ভর করে—পৃথিবীতে ও চাঁদে এক বস্তু ভিন্ন ওজনের হতে পারে, যদিও তার ভর একই থাকে।</p>
+    <button onclick="closePopup()">বন্ধ করুন</button>
 </body>
 </html>

@@ -130,6 +130,8 @@
             width: 200px;
             height: 250px;
             margin-bottom: 20px;
+            left: -135px;
+            top: 30px;
         }
 
         .beaker-outline {
@@ -335,6 +337,41 @@
             background-color: #555;
         }
 
+                #learnButton {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        #learnButton:hover {
+            background-color: #45a049;
+        }
+
+        #popup {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        #popup button {
+            background-color: #f44336;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: block;
+            margin-left: auto;
+        }
+
+        #popup button:hover {
+            background-color: #d32f2f;
+        }
+
         @media (max-width: 600px) {
             .lab-setup {
                 flex-direction: column;
@@ -363,6 +400,7 @@
     </style>
 </head>
 <body>
+    <button id="learnButton" style="position: fixed; bottom: 40px; right: 60px; z-index: 1000;">এসো লিটমাসের ব্যবহার শিখি</button>
     <div class="container">
          <button class="back-button" onclick="window.close()">Back to Chemistry Page</button>
         <h1>Litmus Test AR Experience</h1>
@@ -374,7 +412,7 @@
                 <div class="litmus red" draggable="true" data-type="red" role="button" aria-label="Red litmus paper" tabindex="0">Red Litmus</div>
             </div>
             
-            <div class="beaker-area">
+            
                 <div class="beaker" id="beaker-target" role="region" aria-label="Beaker for litmus test">
                     <div class="beaker-outline"></div>
                     <div class="beaker-solution" id="solution"></div>
@@ -388,7 +426,7 @@
                     <button class="solution-btn" style="background-color: #f1c40f; color: white;" data-solution="vinegar" data-type="acidic" aria-label="Select Vinegar (Acidic)">Vinegar (Acidic)</button>
                     <button class="solution-btn" style="background-color: #2ecc71; color: white;" data-solution="soap" data-type="basic" aria-label="Select Soap (Basic)">Soap (Basic)</button>
                 </div>
-            </div>
+            
         </div>
         
         <div class="scoreboard" id="scoreboard" role="status">
@@ -802,6 +840,19 @@
             
             nextQuestionBtn.addEventListener('click', generateQuizQuestion);
         });
+
+        function showPopup() {
+        document.getElementById('popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        document.getElementById('learnButton').addEventListener('click', showPopup);
     </script>
+    <div id="popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border: 1px solid black; z-index: 1001; max-width: 500px; text-align: justify;">
+    <p>লিটমাস হলো এক ধরনের প্রাকৃতিক নির্দেশক (indicator), যা কোনো পদার্থ অ্যাসিড না ক্ষার (ক্ষারক) তা চিহ্নিত করতে সাহায্য করে। এটি সাধারণত কাগজের ফিতা আকারে পাওয়া যায় এবং লাল ও নীল—এই দুই রঙে ব্যবহৃত হয়। যদি কোনো পদার্থ অ্যাসিড হয়, তবে নীল লিটমাস কাগজ লাল হয়ে যায়, আর যদি ক্ষার হয়, তবে লাল লিটমাস কাগজ নীল হয়ে যায়। কিন্তু নিরপেক্ষ পদার্থের ক্ষেত্রে (যেমন: বিশুদ্ধ পানি) লিটমাসের রঙে কোনো পরিবর্তন হয় না। লিটমাস পরীক্ষার মাধ্যমে সহজেই স্কুল বা ঘরে থাকা বিভিন্ন দ্রব্য যেমন লেবুর রস, সাবান পানি ইত্যাদি যাচাই করা যায় অ্যাসিড না ক্ষার তা বোঝার জন্য।</p>
+    <button onclick="closePopup()">বন্ধ করুন</button>
 </body>
 </html>

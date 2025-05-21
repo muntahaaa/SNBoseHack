@@ -340,6 +340,41 @@
             color: #333;
         }
         
+        #learnButton {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        #learnButton:hover {
+            background-color: #45a049;
+        }
+
+        #popup {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        #popup button {
+            background-color: #f44336;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: block;
+            margin-left: auto;
+        }
+
+        #popup button:hover {
+            background-color: #d32f2f;
+        }
+
         @media (max-width: 600px) {
             .quiz-options {
                 grid-template-columns: repeat(2, 1fr);
@@ -357,6 +392,7 @@
     </style>
 </head>
 <body>
+    <button id="learnButton" style="position: fixed; bottom: 40px; right: 60px; z-index: 1000;">এসো সংখ্যারেখা সম্পর্কে শিখি</button>
     <button class="back-button" onclick="window.close()">Back to Math Page</button>
     <h1>Number Line Simulation</h1>
     
@@ -745,6 +781,19 @@
             
             updateTotalDisplay();
         });
+
+        function showPopup() {
+        document.getElementById('popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        document.getElementById('learnButton').addEventListener('click', showPopup);
     </script>
+    <div id="popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border: 1px solid black; z-index: 1001; max-width: 500px; text-align: justify;">
+    <p>সংখ্যারেখা হলো একটি সরল রেখা, যেখানে বিভিন্ন সংখ্যা সঠিক ক্রমে স্থাপন করা হয়। সাধারণত এই রেখার মাঝখানে ০ থাকে, তার ডানদিকে ধনাত্মক সংখ্যা এবং বামদিকে ঋণাত্মক সংখ্যা সাজানো থাকে। সংখ্যারেখার সাহায্যে আমরা সংখ্যা গুলোকে সহজে বুঝতে পারি, যোগ-বিয়োগ করতে পারি এবং ধন ও ঋণ উভয় ধরনের সংখ্যার মান নির্ণয় করতে পারি। যেমন, যদি তুমি সংখ্যারেখায় ২ থেকে ৫ পর্যন্ত পা বাড়াও, তাহলে মোট ৩ ধাপ এগিয়েছে বোঝা যাবে। সংখ্যারেখা গাণিতিক ধারণাগুলো আরও স্পষ্ট ও সহজ করে তোলে।</p>
+    <button onclick="closePopup()">বন্ধ করুন</button>
 </body>
 </html>

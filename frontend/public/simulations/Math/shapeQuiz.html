@@ -238,6 +238,41 @@
             cursor: not-allowed;
         }
 
+        #learnButton {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        #learnButton:hover {
+            background-color: #45a049;
+        }
+
+        #popup {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        #popup button {
+            background-color: #f44336;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: block;
+            margin-left: auto;
+        }
+
+        #popup button:hover {
+            background-color: #d32f2f;
+        }
+
         @media (max-width: 768px) {
             .main-container {
                 flex-direction: column;
@@ -256,6 +291,7 @@
     </style>
 </head>
 <body>
+    <button id="learnButton" style="position: fixed; bottom: 40px; right: 60px; z-index: 1000;">এসো জ্যামিতিক আকার শিখি</button>
     <button class="back-button" onclick="window.close()">Back to Math Page</button>
     <h1>Interactive Quadrilateral Explorer</h1>
     
@@ -935,6 +971,18 @@
         
         // Initialize the display
         updateDisplay();
+        function showPopup() {
+        document.getElementById('popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        document.getElementById('learnButton').addEventListener('click', showPopup);
     </script>
+    <div id="popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border: 1px solid black; z-index: 1001; max-width: 500px; text-align: justify;">
+    <p>জ্যামিতিক আকার আমাদের চারপাশে ছড়িয়ে আছে—তুমি যেদিকেই তাকাও, কোনো না কোনো আকার চোখে পড়বেই! জ্যামিতিক আকার মানে হলো এমন কিছু নির্দিষ্ট রূপ বা গঠন, যেগুলো রেখা, কোণ এবং পৃষ্ঠ দিয়ে তৈরি হয়। যেমন: বৃত্ত গোলাকার একটি আকার যার কোনো কোণ নেই, ত্রিভুজে তিনটি বাহু ও তিনটি কোণ থাকে, চতুর্ভুজে চারটি বাহু ও কোণ থাকে, আবার বর্গ ও আয়তক্ষেত্র হলো বিশেষ ধরনের চতুর্ভুজ। এ ছাড়া বহুভুজ মানে অনেক কোণ ও বাহু বিশিষ্ট আকার। এই আকারগুলো গণিতে ব্যবহার হয় দৈর্ঘ্য, ক্ষেত্রফল ও পরিসীমা নির্ণয় করার জন্য। জ্যামিতিক আকার শিখলে আমরা নকশা আঁকা, ভবন তৈরি, এমনকি শিল্পকর্মেও জ্ঞানের ব্যবহার করতে পারি!</p>
+    <button onclick="closePopup()">বন্ধ করুন</button>
 </body>
 </html>

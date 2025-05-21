@@ -304,6 +304,41 @@
             margin-right: 8px;
             font-size: 18px;
         }
+
+        #learnButton {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        #learnButton:hover {
+            background-color: #45a049;
+        }
+
+        #popup {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        #popup button {
+            background-color: #f44336;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: block;
+            margin-left: auto;
+        }
+
+        #popup button:hover {
+            background-color: #d32f2f;
+        }
         
         @media (max-width: 768px) {
             .container {
@@ -338,6 +373,7 @@
     </style>
 </head>
 <body>
+    <button id="learnButton" style="position: fixed; bottom: 40px; right: 60px; z-index: 1000;">মোলারিটি সম্পর্কে জানি</button>
      <button class="back-button" onclick="window.close()">Back to Chemistry Page</button>
     <h1>AR Molarity Calculator</h1>
     
@@ -725,6 +761,19 @@
         // Initialize the visualization
         updateLiquid();
         calculateMolarity();
+
+        function showPopup() {
+        document.getElementById('popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        document.getElementById('learnButton').addEventListener('click', showPopup);
     </script>
+    <div id="popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border: 1px solid black; z-index: 1001; max-width: 500px; text-align: justify;">
+    <p>মোলারিটি (Molarity) হলো দ্রবণের ঘনত্ব পরিমাপের একটি পদ্ধতি, যা বলে দেয় নির্দিষ্ট পরিমাণ দ্রবণে কত মোল দ্রবিত পদার্থ (solute) আছে। এটি গণনা করা হয় এই সূত্র দিয়ে: মোলারিটি (M) = মোল / লিটার দ্রবণ। অর্থাৎ, ১ লিটার দ্রবণে যদি ১ মোল পদার্থ দ্রবীভূত থাকে, তবে সেই দ্রবণের মোলারিটি হবে ১ মোলার (1 M)। মোলারিটি বোঝা গুরুত্বপূর্ণ কারণ এটি রাসায়নিক বিক্রিয়ায় অংশগ্রহণকারী পদার্থের সঠিক অনুপাত নির্ধারণে সাহায্য করে। উদাহরণস্বরূপ, যদি তুমি ২ মোল লবণ (NaCl) ১ লিটার পানিতে দ্রবীভূত করো, তবে সেই দ্রবণের মোলারিটি হবে ২ M।</p>
+    <button onclick="closePopup()">বন্ধ করুন</button>
 </body>
 </html>
