@@ -25,14 +25,17 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
+          {/* Public routes */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/math" element={<MathPage />} />
-          <Route path="/physics" element={<PhysicsPage />} />
-          <Route path="/chemistry" element={<ChemistryPage />} />
+          
+          {/* Protected routes */}
           <Route element={<PrivateRoute />}>
             <Route path="/research-desk" element={<ResearchDesk />} />
+            <Route path="/math" element={<MathPage />} />
+            <Route path="/physics" element={<PhysicsPage />} />
+            <Route path="/chemistry" element={<ChemistryPage />} />
           </Route>
         </Routes>
       </Router>

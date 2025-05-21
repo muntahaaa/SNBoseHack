@@ -1,6 +1,10 @@
 import { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
+// Set default axios configs
+axios.defaults.baseURL = 'http://localhost:5000';
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -8,17 +12,30 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
+  // Configure axios interceptor for auth token
+  useEffect(() => {
+    const interceptor = axios.interceptors.request.use(
+      config => {
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      },
+      error => {
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      axios.interceptors.request.eject(interceptor);
+    };
+  }, [token]);
+
   useEffect(() => {
     const loadUser = async () => {
       if (token) {
         try {
-          const config = {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          };
-
-          const { data } = await axios.get('/api/users/profile', config);
+          const { data } = await axios.get('/api/users/profile');
           
           if (data.success) {
             setUser(data.user);
@@ -27,6 +44,7 @@ export const AuthProvider = ({ children }) => {
             setToken(null);
           }
         } catch (error) {
+          console.error('Error loading user:', error);
           localStorage.removeItem('token');
           setToken(null);
         }
@@ -48,6 +66,7 @@ export const AuthProvider = ({ children }) => {
         setUser(data.user);
         return { success: true };
       }
+      return { success: false, message: 'Registration failed' };
     } catch (error) {
       return {
         success: false,
@@ -67,6 +86,7 @@ export const AuthProvider = ({ children }) => {
         setUser(data.user);
         return { success: true };
       }
+      return { success: false, message: 'Login failed' };
     } catch (error) {
       return {
         success: false,
