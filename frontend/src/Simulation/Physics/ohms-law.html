@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ohm's Law AR Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .top-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .equation {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+        }
+        
+        .variable-v {
+            color: blue;
+            transition: font-size 0.3s ease;
+        }
+        
+        .variable-i {
+            color: orange;
+            transition: font-size 0.3s ease;
+        }
+        
+        .variable-r {
+            color: blue;
+            transition: font-size 0.3s ease;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 40px;
+            padding: 15px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            background-color: white;
+        }
+        
+        .control {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .control-label {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .control-description {
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .slider-container {
+            height: 180px;
+            width: 30px;
+            background-color: #f0f0f0;
+            border-radius: 15px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .slider-track {
+            height: 130px;
+            width: 4px;
+            background-color: #ddd;
+            border-radius: 2px;
+        }
+        
+        .slider-handle {
+            width: 30px;
+            height: 15px;
+            background-color: #aaa;
+            border-radius: 5px;
+            position: absolute;
+            cursor: pointer;
+            transform: translateY(50%);
+        }
+        
+        .value {
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .circuit {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            margin-top: 20px;
+            border: 3px solid #000;
+            border-radius: 10px;
+        }
+        
+        .battery-container {
+            position: absolute;
+            top: 30px;
+            left: 160px;
+            display: flex;
+        }
+        
+        .battery {
+            width: 50px;
+            height: 30px;
+            background: linear-gradient(to right, #888, #ccc);
+            border: 1px solid #666;
+            border-radius: 3px;
+            margin-right: 2px;
+        }
+        
+        .resistor-container {
+            position: absolute;
+            top: 165px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .resistor {
+            width: 200px;
+            height: 40px;
+            background: linear-gradient(to right, #ff9999, #ffcccc);
+            border-radius: 20px;
+            border: 1px solid #ff6666;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .resistor::after {
+            content: "";
+            position: absolute;
+            width: 90%;
+            height: 80%;
+            background-image: radial-gradient(circle, #000 1px, transparent 1px);
+            background-size: 10px 10px;
+            opacity: 0.3;
+        }
+        
+        .wire {
+            position: absolute;
+            background-color: #000;
+        }
+        
+        .wire-top {
+            width: 80%;
+            height: 3px;
+            top: 45px;
+            left: 10%;
+        }
+        
+        .wire-left {
+            width: 3px;
+            height: 150px;
+            top: 45px;
+            left: 10%;
+        }
+        
+        .wire-right {
+            width: 3px;
+            height: 150px;
+            top: 45px;
+            right: 10%;
+        }
+        
+        .wire-bottom {
+            width: 80%;
+            height: 3px;
+            bottom: 52px;
+            left: 10%;
+        }
+        
+        .current-display {
+            position: absolute;
+            top: 110px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 5px 15px;
+            background-color: white;
+            border: 2px solid #333;
+            border-radius: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .current-value {
+            color: orange;
+            font-size: 18px;
+        }
+        
+        .current-flow {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            bottom: 20px;
+            left: 20px;
+            color: orange;
+            font-size: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .current-arrow {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-top: 20px solid transparent;
+            border-bottom: 20px solid transparent;
+            border-left: 30px solid orange;
+            transform-origin: center;
+            opacity: 0.8;
+        }
+        
+        .title {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .icons {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .icon {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .phet-logo {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        
+        .p {
+            color: #0000ff;
+        }
+        
+        .h {
+            color: #ff0000;
+        }
+        
+        .e {
+            color: #ffcc00;
+        }
+        
+        .t {
+            color: #00cc00;
+        }
+        
+        .refresh-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            background-color: #ff9933;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            border: 2px solid #ff8800;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-section">
+            <div class="equation">
+                <span class="variable-v" id="var-v">V</span>
+                <span>=</span>
+                <span class="variable-i" id="var-i">I</span>
+                <span class="variable-r" id="var-r">R</span>
+            </div>
+            
+            <div class="controls">
+                <div class="control">
+                    <div class="control-label">V</div>
+                    <div class="control-description">voltage</div>
+                    <div class="slider-container" id="voltage-slider">
+                        <div class="slider-track"></div>
+                        <div class="slider-handle" id="voltage-handle"></div>
+                    </div>
+                    <div class="value"><span id="voltage-value">4.5</span> V</div>
+                </div>
+                
+                <div class="control">
+                    <div class="control-label">R</div>
+                    <div class="control-description">resistance</div>
+                    <div class="slider-container" id="resistance-slider">
+                        <div class="slider-track"></div>
+                        <div class="slider-handle" id="resistance-handle"></div>
+                    </div>
+                    <div class="value"><span id="resistance-value">78</span> Ω</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="circuit">
+            <div class="wire wire-top"></div>
+            <div class="wire wire-left"></div>
+            <div class="wire wire-right"></div>
+            <div class="wire wire-bottom"></div>
+            
+            <div class="battery-container">
+                <div class="battery"></div>
+                <div class="battery"></div>
+                <div class="battery"></div>
+            </div>
+            
+            <div class="resistor-container">
+                <div class="resistor" id="resistor"></div>
+            </div>
+            
+            <div class="current-display">
+                current = <span class="current-value" id="current-value">57.7</span> mA
+            </div>
+            
+            <div class="current-flow" id="current-flow">
+                <div class="current-arrow" id="arrow1"></div>
+                <div class="current-arrow" id="arrow2" style="opacity: 0;"></div>
+            </div>
+            
+            <div class="title">Ohm's Law</div>
+            
+            <!-- Icons removed as requested -->
+            
+            <div class="refresh-btn">↻</div>
+        </div>
+    </div>
+
+    <script>
+        // Initial values
+        let voltage = 4.5;
+        let resistance = 78;
+        let current = voltage / resistance * 1000; // in mA
+        
+        // DOM elements
+        const voltageSlider = document.getElementById('voltage-slider');
+        const voltageHandle = document.getElementById('voltage-handle');
+        const voltageValue = document.getElementById('voltage-value');
+        
+        const resistanceSlider = document.getElementById('resistance-slider');
+        const resistanceHandle = document.getElementById('resistance-handle');
+        const resistanceValue = document.getElementById('resistance-value');
+        
+        const currentValue = document.getElementById('current-value');
+        const resistorElement = document.getElementById('resistor');
+        
+        const varV = document.getElementById('var-v');
+        const varI = document.getElementById('var-i');
+        const varR = document.getElementById('var-r');
+        
+        const arrow1 = document.getElementById('arrow1');
+        const arrow2 = document.getElementById('arrow2');
+        
+        // Initialize positions
+        updateVoltageHandle();
+        updateResistanceHandle();
+        
+        // Event listeners for dragging sliders
+        let isDraggingVoltage = false;
+        let isDraggingResistance = false;
+        
+        voltageHandle.addEventListener('mousedown', () => {
+            isDraggingVoltage = true;
+        });
+        
+        resistanceHandle.addEventListener('mousedown', () => {
+            isDraggingResistance = true;
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if (isDraggingVoltage) {
+                handleVoltageDrag(e);
+            }
+            if (isDraggingResistance) {
+                handleResistanceDrag(e);
+            }
+        });
+        
+        document.addEventListener('mouseup', () => {
+            isDraggingVoltage = false;
+            isDraggingResistance = false;
+        });
+        
+        // Touch support
+        voltageHandle.addEventListener('touchstart', (e) => {
+            isDraggingVoltage = true;
+            e.preventDefault();
+        });
+        
+        resistanceHandle.addEventListener('touchstart', (e) => {
+            isDraggingResistance = true;
+            e.preventDefault();
+        });
+        
+        document.addEventListener('touchmove', (e) => {
+            if (isDraggingVoltage && e.touches.length > 0) {
+                handleVoltageDrag(e.touches[0]);
+                e.preventDefault();
+            }
+            if (isDraggingResistance && e.touches.length > 0) {
+                handleResistanceDrag(e.touches[0]);
+                e.preventDefault();
+            }
+        });
+        
+        document.addEventListener('touchend', () => {
+            isDraggingVoltage = false;
+            isDraggingResistance = false;
+        });
+        
+        // Drag handlers
+        function handleVoltageDrag(e) {
+            const rect = voltageSlider.getBoundingClientRect();
+            const y = Math.max(0, Math.min(1, 1 - (e.clientY - rect.top) / rect.height));
+            
+            voltage = 0.5 + y * 9.5; // Range from 0.5V to 10V
+            updateVoltageHandle();
+            updateCurrent();
+        }
+        
+        function handleResistanceDrag(e) {
+            const rect = resistanceSlider.getBoundingClientRect();
+            const y = Math.max(0, Math.min(1, 1 - (e.clientY - rect.top) / rect.height));
+            
+            resistance = 10 + y * 990; // Range from 10Ω to 1000Ω
+            updateResistanceHandle();
+            updateCurrent();
+        }
+        
+        // Update UI
+        function updateVoltageHandle() {
+            const percentage = (voltage - 0.5) / 9.5;
+            const position = 130 - (percentage * 130);
+            voltageHandle.style.top = `${position}px`;
+            voltageValue.textContent = voltage.toFixed(1);
+        }
+        
+        function updateResistanceHandle() {
+            const percentage = (resistance - 10) / 990;
+            const position = 130 - (percentage * 130);
+            resistanceHandle.style.top = `${position}px`;
+            resistanceValue.textContent = Math.round(resistance);
+        }
+        
+        function updateCurrent() {
+            current = voltage / resistance * 1000; // in mA
+            currentValue.textContent = current.toFixed(1);
+            
+            // Update equation visualization sizes
+            const vSize = 30 + (voltage / 10) * 40;
+            const rSize = 30 + (resistance / 1000) * 40;
+            const iSize = 30 + (current / 100) * 30;
+            
+            varV.style.fontSize = `${vSize}px`;
+            varR.style.fontSize = `${rSize}px`;
+            varI.style.fontSize = `${iSize}px`;
+            
+            // Update resistor visualization
+            const opacity = Math.min(1, Math.max(0.2, resistance / 500));
+            resistorElement.style.opacity = opacity;
+            
+            // Update current flow animation speed
+            const flowSpeed = Math.max(0.2, Math.min(4, current / 20));
+            const duration = 1.5 / flowSpeed;
+            
+            // Create arrow animation
+            animateArrows(duration);
+        }
+        
+        let arrowAnimationActive = false;
+        
+        function animateArrows(duration) {
+            if (!arrowAnimationActive) {
+                arrowAnimationActive = true;
+                animateArrow();
+            }
+            
+            function animateArrow() {
+                const arrows = [arrow1, arrow2];
+                let positions = [0, -50];
+                let opacities = [0.8, 0];
+                
+                function step() {
+                    positions = positions.map(pos => (pos + 1) % 100);
+                    
+                    arrows.forEach((arrow, i) => {
+                        const pos = positions[i];
+                        
+                        if (pos < 50) {
+                            arrow.style.opacity = opacities[i];
+                            arrow.style.left = `${pos + 20}%`;
+                        } else {
+                            arrow.style.opacity = 0;
+                        }
+                        
+                        if (pos === 0) {
+                            arrow.style.opacity = opacities[i];
+                        }
+                    });
+                    
+                    if (arrowAnimationActive) {
+                        setTimeout(step, duration * 20);
+                    }
+                }
+                
+                step();
+            }
+        }
+        
+        // Initialize
+        updateCurrent();
+        
+        // Refresh button
+        document.querySelector('.refresh-btn').addEventListener('click', () => {
+            voltage = 4.5;
+            resistance = 78;
+            updateVoltageHandle();
+            updateResistanceHandle();
+            updateCurrent();
+        });
+    </script>
+</body>
+</html>
