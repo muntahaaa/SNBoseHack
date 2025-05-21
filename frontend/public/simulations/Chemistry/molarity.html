@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Molarity Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+            touch-action: manipulation;
+            position: relative;
+            padding-top: 60px;
+        }
+        
+        .container {
+            display: flex;
+            flex: 1;
+            flex-wrap: wrap;
+        }
+        
+        .left-panel {
+            flex: 1;
+            padding: 20px;
+            background-color: #fff;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-width: 300px;
+        }
+        
+        .right-panel {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            min-width: 300px;
+        }
+        
+        .bottom-panel {
+            padding: 20px;
+            background-color: #f0f0f0;
+            border-top: 1px solid #ddd;
+            text-align: center;
+        }
+        
+        .control-group {
+            margin-bottom: 30px;
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .slider-container label {
+            width: 120px;
+            font-weight: bold;
+        }
+        
+        .slider {
+            flex: 1;
+            margin: 0 15px;
+        }
+        
+        .value-display {
+            width: 100px;
+            text-align: right;
+            font-weight: bold;
+        }
+        
+        .solute-btn {
+            margin: 5px;
+            padding: 12px 18px;
+            background-color: #e0e0e0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .solute-btn:hover {
+            background-color: #d0d0d0;
+        }
+        
+        .solute-btn.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .solute-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .beaker-container {
+            position: relative;
+            width: 200px;
+            height: 300px;
+        }
+        
+        .beaker {
+            position: absolute;
+            bottom: 0;
+            width: 200px;
+            height: 300px;
+            border: 5px solid #999;
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+            overflow: hidden;
+            background-color: transparent;
+        }
+        
+        .liquid {
+            position: absolute;
+            bottom: 0;
+            width: 103%;
+            height: 0;
+            border-radius: 0 0 20px 20px;
+            transition: height 0.5s, background-color 0.5s;
+        }
+        
+        .molarity-display {
+            margin-top: 20px;
+            padding: 15px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            background-color: #f9f9f9;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .measurements {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #555;
+        }
+        
+        .quiz-container {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .quiz-question {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .quiz-option {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 2px solid #fff;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+        
+        .quiz-option:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .quiz-option.selected {
+            background-color: rgba(33, 150, 243, 0.5);
+            border-color: #2196f3;
+        }
+        
+        .quiz-option.correct {
+            background-color: rgba(76, 175, 80, 0.5);
+            border-color: #4caf50;
+        }
+        
+        .quiz-option.incorrect {
+            background-color: rgba(244, 67, 54, 0.5);
+            border-color: #f44336;
+        }
+        
+        .quiz-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .quiz-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .quiz-btn:hover {
+            background-color: #3e8e41;
+        }
+        
+        .quiz-btn:disabled {
+            background-color: #999;
+            cursor: not-allowed;
+        }
+        
+        .explanation {
+            display: none;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+        
+        .scoreboard {
+            display: none;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 200px;
+        }
+        
+        .quiz-toggle-btn {
+            margin: 20px 0;
+            padding: 12px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .quiz-toggle-btn:hover {
+            background-color: #555;
+        }
+        
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #2c5aa0;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .back-button:hover {
+            background-color: #1c4277;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .back-button:before {
+            content: "←";
+            margin-right: 8px;
+            font-size: 18px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .left-panel, .right-panel {
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+                min-width: auto;
+            }
+            
+            .beaker-container {
+                width: 150px;
+                height: 225px;
+            }
+            
+            .beaker {
+                width: 150px;
+                height: 225px;
+            }
+            
+            .solute-btn {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+            
+            .quiz-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+     <button class="back-button" onclick="window.close()">Back to Chemistry Page</button>
+    <h1>AR Molarity Calculator</h1>
+    
+    <div class="container">
+        <div class="left-panel">
+            <div class="control-group">
+                <div class="slider-container">
+                    <label for="volume-slider">Solution Volume:</label>
+                    <input type="range" id="volume-slider" class="slider" min="50" max="1000" step="10" value="500" aria-label="Solution volume in milliliters">
+                    <span id="volume-display" class="value-display">500 mL</span>
+                </div>
+                
+                <div class="slider-container">
+                    <label for="weight-slider">Solute Weight:</label>
+                    <input type="range" id="weight-slider" class="slider" min="1" max="50" step="1" value="10" aria-label="Solute weight in grams">
+                    <span id="weight-display" class="value-display">10 g</span>
+                </div>
+            </div>
+            
+            <div class="measurements">
+                <p id="solute-info">Selected Solute: NaOH (Molar Mass: 40.00 g/mol)</p>
+                <p id="solution-info">10g NaOH in 500mL water</p>
+            </div>
+            
+            <div class="molarity-display" id="molarity-result">
+                Molarity: 0.50 mol/L
+            </div>
+        </div>
+        
+        <div class="right-panel">
+            <div class="beaker-container">
+                <div class="beaker"></div>
+                <div class="liquid" id="liquid"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bottom-panel">
+        <h3>Select a Solute:</h3>
+        <button class="solute-btn active" data-solute="NaOH" data-color="#3498db" data-mm="40.00" aria-label="Select NaOH solute">NaOH</button>
+        <button class="solute-btn" data-solute="HCl" data-color="#fcff9b" data-mm="36.46" aria-label="Select HCl solute">HCl</button>
+        <button class="solute-btn" data-solute="NaCl" data-color="#3498db" data-mm="58.44" aria-label="Select NaCl solute">NaCl</button>
+        <button class="solute-btn" data-solute="CuSO₄" data-color="#264ef8" data-mm="159.60" aria-label="Select CuSO₄ solute">CuSO₄</button>
+        <button class="solute-btn" data-solute="KMnO₄" data-color="#de3af5" data-mm="158.03" aria-label="Select KMnO₄ solute">KMnO₄</button>
+        
+        <div class="scoreboard" id="scoreboard" role="status">
+            Score: <span id="score">0</span>
+        </div>
+        
+        <div class="quiz-container" id="quiz-container">
+            <div class="quiz-question" id="quiz-question"></div>
+            <div class="quiz-options" id="quiz-options" role="radiogroup"></div>
+            <div class="explanation" id="explanation"></div>
+            <div class="quiz-controls">
+                <button class="quiz-btn" id="check-answer" disabled aria-label="Check selected answer">Check Answer</button>
+                <button class="quiz-btn" id="next-question" style="display: none;" aria-label="Proceed to next question">Next Question</button>
+            </div>
+        </div>
+        
+        <button class="quiz-toggle-btn" id="quiz-toggle-btn" aria-label="Toggle quiz mode">Quiz Mode: Off</button>
+    </div>
+
+    <script>
+        // DOM elements
+        const volumeSlider = document.getElementById('volume-slider');
+        const weightSlider = document.getElementById('weight-slider');
+        const volumeDisplay = document.getElementById('volume-display');
+        const weightDisplay = document.getElementById('weight-display');
+        const soluteInfo = document.getElementById('solute-info');
+        const solutionInfo = document.getElementById('solution-info');
+        const molarityResult = document.getElementById('molarity-result');
+        const liquid = document.getElementById('liquid');
+        const soluteBtns = document.querySelectorAll('.solute-btn');
+        const quizToggleBtn = document.getElementById('quiz-toggle-btn');
+        const quizContainer = document.getElementById('quiz-container');
+        const quizQuestion = document.getElementById('quiz-question');
+        const quizOptions = document.getElementById('quiz-options');
+        const explanation = document.getElementById('explanation');
+        const checkAnswerBtn = document.getElementById('check-answer');
+        const nextQuestionBtn = document.getElementById('next-question');
+        const scoreboard = document.getElementById('scoreboard');
+        const scoreDisplay = document.getElementById('score');
+        
+        // Initial state
+        let currentSolute = {
+            name: 'NaOH',
+            molarMass: 40.00,
+            color: '#3498db' // Fixed to match button data-color
+        };
+        
+        let volume = 500; // mL
+        let weight = 10;  // g
+        let isQuizMode = false;
+        let score = 0;
+        let selectedOptionIndex = null;
+        let correctAnswer = null;
+        let optionElements = [];
+        
+        // Update functions
+        function updateLiquid() {
+            // Calculate height based on volume (max height is 280px at 1000mL, 210px at 750mL on mobile)
+            const maxHeight = window.innerWidth <= 768 ? 210 : 280;
+            const height = (volume / 1000) * maxHeight;
+            liquid.style.height = `${height}px`;
+            
+            // Calculate opacity based on concentration (weight/volume)
+            const concentration = weight / volume;
+            const maxConcentration = 50 / 50; // 50g in 50mL
+            
+            // Map concentration to opacity between 0.2 and 0.9
+            const opacity = 0.2 + (concentration / maxConcentration) * 0.7;
+            liquid.style.backgroundColor = hexToRgba(currentSolute.color, Math.min(opacity, 0.9));
+            
+            // Update the measurements display
+            solutionInfo.textContent = `${weight}g ${currentSolute.name} in ${volume}mL water`;
+        }
+        
+        function calculateMolarity() {
+            // Molarity = moles of solute / volume of solution in liters
+            const moles = weight / currentSolute.molarMass;
+            const volumeInLiters = volume / 1000;
+            const molarity = moles / volumeInLiters;
+            
+            molarityResult.textContent = `Molarity: ${molarity.toFixed(2)} mol/L`;
+            return molarity;
+        }
+        
+        function hexToRgba(hex, alpha) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+        
+        // Event listeners for normal mode
+        volumeSlider.addEventListener('input', function() {
+            if (isQuizMode) return;
+            volume = parseInt(this.value);
+            volumeDisplay.textContent = `${volume} mL`;
+            updateLiquid();
+            calculateMolarity();
+        });
+        
+        volumeSlider.addEventListener('keydown', function(e) {
+            if (isQuizMode) return;
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                volume = parseInt(this.value);
+                volumeDisplay.textContent = `${volume} mL`;
+                updateLiquid();
+                calculateMolarity();
+            }
+        });
+        
+        weightSlider.addEventListener('input', function() {
+            if (isQuizMode) return;
+            weight = parseInt(this.value);
+            weightDisplay.textContent = `${weight} g`;
+            updateLiquid();
+            calculateMolarity();
+        });
+        
+        weightSlider.addEventListener('keydown', function(e) {
+            if (isQuizMode) return;
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                weight = parseInt(this.value);
+                weightDisplay.textContent = `${weight} g`;
+                updateLiquid();
+                calculateMolarity();
+            }
+        });
+        
+        soluteBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (isQuizMode) return;
+                selectSolute(this);
+            });
+            
+            btn.addEventListener('keydown', function(e) {
+                if (isQuizMode) return;
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    selectSolute(this);
+                }
+            });
+        });
+        
+        function selectSolute(btn) {
+            soluteBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            currentSolute = {
+                name: btn.dataset.solute,
+                molarMass: parseFloat(btn.dataset.mm),
+                color: btn.dataset.color
+            };
+            
+            soluteInfo.textContent = `Selected Solute: ${currentSolute.name} (Molar Mass: ${currentSolute.molarMass.toFixed(2)} g/mol)`;
+            updateLiquid();
+            calculateMolarity();
+        }
+        
+        // Quiz mode toggle
+        quizToggleBtn.addEventListener('click', () => {
+            isQuizMode = !isQuizMode;
+            quizToggleBtn.textContent = `Quiz Mode: ${isQuizMode ? 'On' : 'Off'}`;
+            
+            if (isQuizMode) {
+                quizContainer.style.display = 'block';
+                scoreboard.style.display = 'block';
+                molarityResult.style.display = 'none';
+                volumeSlider.disabled = true;
+                weightSlider.disabled = true;
+                soluteBtns.forEach(btn => {
+                    btn.disabled = true;
+                    btn.setAttribute('aria-disabled', 'true');
+                });
+                generateQuizQuestion();
+            } else {
+                quizContainer.style.display = 'none';
+                scoreboard.style.display = 'none';
+                molarityResult.style.display = 'block';
+                volumeSlider.disabled = false;
+                weightSlider.disabled = false;
+                soluteBtns.forEach(btn => {
+                    btn.disabled = false;
+                    btn.setAttribute('aria-disabled', 'false');
+                });
+                // Reset to initial state
+                volume = 500;
+                weight = 10;
+                currentSolute = {
+                    name: 'NaOH',
+                    molarMass: 40.00,
+                    color: '#3498db'
+                };
+                soluteBtns.forEach(b => b.classList.remove('active'));
+                document.querySelector('[data-solute="NaOH"]').classList.add('active');
+                volumeSlider.value = volume;
+                weightSlider.value = weight;
+                volumeDisplay.textContent = `${volume} mL`;
+                weightDisplay.textContent = `${weight} g`;
+                soluteInfo.textContent = `Selected Solute: ${currentSolute.name} (Molar Mass: ${currentSolute.molarMass.toFixed(2)} g/mol)`;
+                updateLiquid();
+                calculateMolarity();
+            }
+        });
+        
+        function generateQuizQuestion() {
+            explanation.style.display = 'none';
+            checkAnswerBtn.disabled = true;
+            checkAnswerBtn.style.display = 'block';
+            nextQuestionBtn.style.display = 'none';
+            selectedOptionIndex = null;
+            quizOptions.innerHTML = '';
+            optionElements = [];
+            
+            // Randomly select solute, volume, and weight
+            const solutes = [
+                { name: 'NaOH', molarMass: 40.00, color: '#3498db' },
+                { name: 'HCl', molarMass: 36.46, color: '#fcff9b' },
+                { name: 'NaCl', molarMass: 58.44, color: '#3498db' },
+                { name: 'CuSO₄', molarMass: 159.60, color: '#264ef8' },
+                { name: 'KMnO₄', molarMass: 158.03, color: '#de3af5' }
+            ];
+            
+            const selectedSolute = solutes[Math.floor(Math.random() * solutes.length)];
+            volume = Math.floor(Math.random() * 20) * 50 + 50; // 50 to 1000, step 50
+            weight = Math.floor(Math.random() * 50) + 1; // 1 to 50, step 1
+            
+            currentSolute = selectedSolute;
+            soluteInfo.textContent = `Selected Solute: ${currentSolute.name} (Molar Mass: ${currentSolute.molarMass.toFixed(2)} g/mol)`;
+            volumeSlider.value = volume;
+            weightSlider.value = weight;
+            volumeDisplay.textContent = `${volume} mL`;
+            weightDisplay.textContent = `${weight} g`;
+            solutionInfo.textContent = `${weight}g ${currentSolute.name} in ${volume}mL water`;
+            
+            // Update beaker
+            updateLiquid();
+            
+            // Calculate correct molarity
+            const moles = weight / currentSolute.molarMass;
+            const volumeInLiters = volume / 1000;
+            correctAnswer = (moles / volumeInLiters).toFixed(2);
+            
+            quizQuestion.textContent = `Calculate the molarity of a solution made by dissolving ${weight}g of ${currentSolute.name} (Molar Mass: ${currentSolute.molarMass.toFixed(2)} g/mol) in ${volume}mL of water.`;
+            
+            // Generate multiple-choice options
+            const options = [correctAnswer];
+            const distractors = [
+                (moles / (volume / 100)).toFixed(2), // Wrong: using mL instead of L
+                (weight / volumeInLiters).toFixed(2), // Wrong: using weight directly
+                (moles / (volumeInLiters * 2)).toFixed(2) // Wrong: doubling volume
+            ].filter(opt => opt !== correctAnswer && !options.includes(opt));
+            
+            while (options.length < 4 && distractors.length > 0) {
+                const randomDistractor = distractors.splice(Math.floor(Math.random() * distractors.length), 1)[0];
+                options.push(randomDistractor);
+            }
+            
+            // Fill remaining options with random variations
+            while (options.length < 4) {
+                const variation = (parseFloat(correctAnswer) + (Math.random() - 0.5) * 0.5).toFixed(2);
+                if (!options.includes(variation) && variation >= 0) {
+                    options.push(variation);
+                }
+            }
+            
+            options.sort(() => Math.random() - 0.5);
+            
+            options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'quiz-option';
+                optionElement.textContent = `${option} mol/L`;
+                optionElement.dataset.index = index;
+                optionElement.dataset.value = option;
+                optionElement.tabIndex = 0;
+                optionElement.setAttribute('role', 'radio');
+                optionElement.setAttribute('aria-checked', 'false');
+                
+                optionElement.addEventListener('click', () => {
+                    optionElements.forEach(el => {
+                        el.classList.remove('selected');
+                        el.setAttribute('aria-checked', 'false');
+                    });
+                    optionElement.classList.add('selected');
+                    optionElement.setAttribute('aria-checked', 'true');
+                    selectedOptionIndex = index;
+                    checkAnswerBtn.disabled = false;
+                });
+                
+                optionElement.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        optionElement.click();
+                    }
+                });
+                
+                quizOptions.appendChild(optionElement);
+                optionElements.push(optionElement);
+            });
+            
+            // Focus first option
+            setTimeout(() => optionElements[0].focus(), 500);
+        }
+        
+        checkAnswerBtn.addEventListener('click', () => {
+            if (selectedOptionIndex === null) return;
+            
+            const selectedOption = optionElements[selectedOptionIndex];
+            const selectedValue = selectedOption.dataset.value;
+            
+            optionElements.forEach(option => {
+                option.classList.remove('correct', 'incorrect');
+                if (option.dataset.value === correctAnswer) {
+                    option.classList.add('correct');
+                }
+            });
+            
+            const moles = (weight / currentSolute.molarMass).toFixed(3);
+            const volumeInLiters = (volume / 1000).toFixed(3);
+            const explanationText = `Molarity = moles of solute / volume in liters. Moles = ${weight}g / ${currentSolute.molarMass.toFixed(2)} g/mol = ${moles} mol. Volume = ${volume}mL = ${volumeInLiters} L. Molarity = ${moles} mol / ${volumeInLiters} L = ${correctAnswer} mol/L.`;
+            
+            if (selectedValue === correctAnswer) {
+                score += 10;
+                scoreDisplay.textContent = score;
+                explanation.innerHTML = `<strong>Correct!</strong> ${explanationText}`;
+            } else {
+                selectedOption.classList.add('incorrect');
+                explanation.innerHTML = `<strong>Incorrect.</strong> ${explanationText}`;
+            }
+            
+            explanation.style.display = 'block';
+            checkAnswerBtn.style.display = 'none';
+            nextQuestionBtn.style.display = 'block';
+            optionElements.forEach(option => {
+                option.style.pointerEvents = 'none';
+                option.setAttribute('aria-disabled', 'true');
+            });
+            nextQuestionBtn.focus();
+        });
+        
+        nextQuestionBtn.addEventListener('click', generateQuizQuestion);
+        
+        // Initialize the visualization
+        updateLiquid();
+        calculateMolarity();
+    </script>
+</body>
+</html>

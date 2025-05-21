@@ -12,6 +12,7 @@ const Chatbot = ({
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showBengaliTooltip, setShowBengaliTooltip] = useState(true);
   const messagesEndRef = useRef(null);
 
   // Scroll to bottom of chat when new messages come in
@@ -27,10 +28,9 @@ const Chatbot = ({
     setInputValue(e.target.value);
   };
 
-  const sendMessage = async (messageText) => {
+  const sendMessage = async (messageText, inBengali = false) => {
     if (!messageText.trim()) return;
     
-    // Add user message to chat
     const userMessage = {
       role: 'user',
       content: messageText,
@@ -42,14 +42,18 @@ const Chatbot = ({
     setIsLoading(true);
     
     try {
-      // Send request to backend
+      // If Bengali is requested, modify the message
+      const effectiveMessage = inBengali 
+        ? `Provide the answer in Bengali (Bangla) and avoid using English.\n\n${messageText}`
+        : messageText;
+
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: messageText,
+          message: effectiveMessage,
           promptContext,
           chatHistory: messages.map(msg => ({
             ...msg,
@@ -64,7 +68,6 @@ const Chatbot = ({
       
       const data = await response.json();
       
-      // Add bot response to chat
       const botMessage = {
         role: 'model',
         content: data.response,
@@ -74,9 +77,8 @@ const Chatbot = ({
       setMessages(prevMessages => [...prevMessages, botMessage]);
       
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('Error:', error);
       
-      // Add error message to chat
       const errorMessage = {
         role: 'system',
         content: 'Sorry, there was an error processing your request.',
@@ -95,6 +97,12 @@ const Chatbot = ({
     await sendMessage(inputValue);
   };
 
+  const handleBengaliClick = async (e) => {
+    e.preventDefault();
+    setShowBengaliTooltip(false);
+    await sendMessage(inputValue, true);
+  };
+
   return (
     <div className={`chatbot-container ${theme}`}>
       <div className="chatbot-header">
@@ -106,16 +114,23 @@ const Chatbot = ({
         {messages.length === 0 ? (
           <div className="empty-chat">
             <p>Send a message to start chatting!</p>
+            {showBengaliTooltip && (
+              <div className="bengali-tooltip">
+                💬 Want the answer in Bengali? Click "বাংলা"
+              </div>
+            )}
           </div>
         ) : (
-          messages.map((message, index) => (
-            <ChatMessage 
-              key={index} 
-              role={message.role} 
-              content={message.content} 
-              timestamp={message.timestamp}
-            />
-          ))
+          <>
+            {messages.map((message, index) => (
+              <ChatMessage 
+                key={index} 
+                role={message.role} 
+                content={message.content} 
+                timestamp={message.timestamp}
+              />
+            ))}
+          </>
         )}
         {isLoading && (
           <div className="loading-indicator">
@@ -137,9 +152,20 @@ const Chatbot = ({
           placeholder="Type your message..."
           disabled={isLoading}
         />
-        <button type="submit" disabled={isLoading || !inputValue.trim()}>
-          Send
-        </button>
+        <div className="button-group">
+          <button type="submit" className="send-btn" disabled={isLoading || !inputValue.trim()}>
+            Send
+          </button>
+          <button 
+            type="button" 
+            className="bengali-btn" 
+            onClick={handleBengaliClick}
+            disabled={isLoading || !inputValue.trim()}
+            title="Get answer in Bengali"
+          >
+            বাংলা
+          </button>
+        </div>
       </form>
     </div>
   );

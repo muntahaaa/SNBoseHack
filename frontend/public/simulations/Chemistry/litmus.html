@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Litmus Test AR Experience</title>
+    <style>        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #2c5aa0;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .back-button:hover {
+            background-color: #1c4277;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .back-button:before {
+            content: "←";
+            margin-right: 8px;
+            font-size: 18px;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            touch-action: manipulation;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .lab-setup {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .litmus-container {
+            display: flex;
+            flex-direction: column;
+            width: 30%;
+            min-width: 150px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .litmus-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .litmus {
+            width: 40px;
+            height: 120px;
+            margin: 5px auto;
+            border-radius: 5px;
+            cursor: grab;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+        }
+
+        .litmus.blue {
+            background-color: #3498db;
+        }
+
+        .litmus.red {
+            background-color: #e74c3c;
+        }
+
+        .litmus.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .beaker-area {
+            width: 65%;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .beaker {
+            position: relative;
+            width: 200px;
+            height: 250px;
+            margin-bottom: 20px;
+        }
+
+        .beaker-outline {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            border: 4px solid #333;
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .beaker-solution {
+            position: absolute;
+            width: 103%;
+            height: 80%;
+            bottom: 0;
+            background-color: transparent;
+            border-radius: 0 0 16px 16px;
+            transition: background-color 0.5s ease;
+        }
+
+        .solution-label {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            opacity: 0.8;
+        }
+
+        .solution-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .solution-btn {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .solution-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .solution-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .quiz-container {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 500px;
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .quiz-question {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .quiz-option {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 2px solid #fff;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .quiz-option:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .quiz-option.selected {
+            background-color: rgba(33, 150, 243, 0.5);
+            border-color: #2196f3;
+        }
+
+        .quiz-option.correct {
+            background-color: rgba(76, 175, 80, 0.5);
+            border-color: #4caf50;
+        }
+
+        .quiz-option.incorrect {
+            background-color: rgba(244, 67, 54, 0.5);
+            border-color: #f44336;
+        }
+
+        .quiz-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .quiz-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .quiz-btn:hover {
+            background-color: #3e8e41;
+        }
+
+        .quiz-btn:disabled {
+            background-color: #999;
+            cursor: not-allowed;
+        }
+
+        .explanation {
+            display: none;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+
+        .scoreboard {
+            display: none;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+
+        .info-panel {
+            margin-top: 20px;
+            width: 100%;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .result-message {
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        .dragging {
+            opacity: 0.7;
+            cursor: grabbing;
+        }
+
+        .quiz-toggle-btn {
+            margin: 20px 0;
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .quiz-toggle-btn:hover {
+            background-color: #555;
+        }
+
+        @media (max-width: 600px) {
+            .lab-setup {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .litmus-container, .beaker-area {
+                width: 100%;
+                margin-right: 0;
+            }
+
+            .beaker {
+                width: 150px;
+                height: 200px;
+            }
+
+            .solution-btn {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+
+            .quiz-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+         <button class="back-button" onclick="window.close()">Back to Chemistry Page</button>
+        <h1>Litmus Test AR Experience</h1>
+        
+        <div class="lab-setup">
+            <div class="litmus-container">
+                <div class="litmus-title">Litmus Papers</div>
+                <div class="litmus blue" draggable="true" data-type="blue" role="button" aria-label="Blue litmus paper" tabindex="0">Blue Litmus</div>
+                <div class="litmus red" draggable="true" data-type="red" role="button" aria-label="Red litmus paper" tabindex="0">Red Litmus</div>
+            </div>
+            
+            <div class="beaker-area">
+                <div class="beaker" id="beaker-target" role="region" aria-label="Beaker for litmus test">
+                    <div class="beaker-outline"></div>
+                    <div class="beaker-solution" id="solution"></div>
+                    <div class="solution-label" id="solution-label"></div>
+                </div>
+                
+                <div class="solution-buttons">
+                    <button class="solution-btn" style="background-color: #3498db; color: white;" data-solution="water" data-type="neutral" aria-label="Select Water (Neutral)">Water (Neutral)</button>
+                    <button class="solution-btn" style="background-color: #e74c3c; color: white;" data-solution="hcl" data-type="acidic" aria-label="Select HCl (Acidic)">HCl (Acidic)</button>
+                    <button class="solution-btn" style="background-color: #9b59b6; color: white;" data-solution="naoh" data-type="basic" aria-label="Select NaOH (Basic)">NaOH (Basic)</button>
+                    <button class="solution-btn" style="background-color: #f1c40f; color: white;" data-solution="vinegar" data-type="acidic" aria-label="Select Vinegar (Acidic)">Vinegar (Acidic)</button>
+                    <button class="solution-btn" style="background-color: #2ecc71; color: white;" data-solution="soap" data-type="basic" aria-label="Select Soap (Basic)">Soap (Basic)</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="scoreboard" id="scoreboard" role="status">
+            Score: <span id="score">0</span>
+        </div>
+        
+        <div class="quiz-container" id="quiz-container">
+            <div class="quiz-question" id="quiz-question"></div>
+            <div class="quiz-options" id="quiz-options" role="radiogroup"></div>
+            <div class="explanation" id="explanation"></div>
+            <div class="quiz-controls">
+                <button class="quiz-btn" id="check-answer" disabled aria-label="Check selected answer">Check Answer</button>
+                <button class="quiz-btn" id="next-question" style="display: none;" aria-label="Proceed to next question">Next Question</button>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <div class="info-title">Litmus Test Information:</div>
+            <p>• Blue litmus paper turns red in acidic solutions and remains blue in neutral or basic solutions.</p>
+            <p>• Red litmus paper turns blue in basic solutions and remains red in neutral or acidic solutions.</p>
+            <div class="result-message" id="result-message">Select a solution and drag a litmus paper to test!</div>
+        </div>
+        
+        <button class="quiz-toggle-btn" id="quiz-toggle-btn" aria-label="Toggle quiz mode">Quiz Mode: Off</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const solution = document.getElementById('solution');
+            const solutionLabel = document.getElementById('solution-label');
+            const resultMessage = document.getElementById('result-message');
+            const litmusPapers = document.querySelectorAll('.litmus');
+            const solutionButtons = document.querySelectorAll('.solution-btn');
+            const beakerTarget = document.getElementById('beaker-target');
+            const quizToggleBtn = document.getElementById('quiz-toggle-btn');
+            const quizContainer = document.getElementById('quiz-container');
+            const quizQuestion = document.getElementById('quiz-question');
+            const quizOptions = document.getElementById('quiz-options');
+            const explanation = document.getElementById('explanation');
+            const checkAnswerBtn = document.getElementById('check-answer');
+            const nextQuestionBtn = document.getElementById('next-question');
+            const scoreboard = document.getElementById('scoreboard');
+            const scoreDisplay = document.getElementById('score');
+            
+            let currentSolution = null;
+            let currentSolutionType = null;
+            let currentSolutionColor = null;
+            let litmusType = null; // Moved to outer scope
+            let draggedElement = null;
+            let isQuizMode = false;
+            let isAnimating = false;
+            let score = 0;
+            let selectedOptionIndex = null;
+            let correctAnswer = null;
+            let optionElements = [];
+            
+            // Set up solution selection
+            solutionButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (isQuizMode || isAnimating) return;
+                    selectSolution(this);
+                });
+                button.addEventListener('keydown', (e) => {
+                    if (isQuizMode || isAnimating) return;
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        selectSolution(button);
+                    }
+                });
+            });
+            
+            function selectSolution(button) {
+                const solutionName = button.dataset.solution;
+                const solutionType = button.dataset.type;
+                currentSolution = solutionName;
+                currentSolutionType = solutionType;
+                currentSolutionColor = button.style.backgroundColor;
+                
+                updateBeaker(solutionName, currentSolutionColor);
+                resultMessage.textContent = `Selected solution: ${solutionName.toUpperCase()}. Drag a litmus paper to test!`;
+                resultMessage.style.color = "#333";
+            }
+            
+            // Drag and drop functionality
+            litmusPapers.forEach(paper => {
+                paper.addEventListener('dragstart', function(e) {
+                    if (isQuizMode || isAnimating) return;
+                    draggedElement = this;
+                    this.classList.add('dragging');
+                    e.dataTransfer.setData('text/plain', this.dataset.type);
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+                
+                paper.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                });
+                
+                // Touch support
+                paper.addEventListener('touchstart', function(e) {
+                    if (isQuizMode || isAnimating) return;
+                    draggedElement = this;
+                    this.classList.add('dragging');
+                });
+                
+                paper.addEventListener('touchmove', function(e) {
+                    if (isQuizMode || isAnimating) return;
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    draggedElement.style.position = 'absolute';
+                    draggedElement.style.left = `${touch.clientX - 20}px`;
+                    draggedElement.style.top = `${touch.clientY - 60}px`;
+                });
+                
+                paper.addEventListener('touchend', function(e) {
+                    if (isQuizMode || isAnimating) return;
+                    this.classList.remove('dragging');
+                    draggedElement.style.position = '';
+                    draggedElement.style.left = '';
+                    draggedElement.style.top = '';
+                    
+                    const rect = beakerTarget.getBoundingClientRect();
+                    const touch = e.changedTouches[0];
+                    if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+                        touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+                        if (!currentSolution) {
+                            resultMessage.textContent = "Please select a solution first!";
+                            resultMessage.style.color = "#e74c3c";
+                            return;
+                        }
+                        testLitmus(this.dataset.type, currentSolutionType, currentSolutionColor);
+                    }
+                });
+                
+                // Keyboard support
+                paper.addEventListener('keydown', function(e) {
+                    if (isQuizMode || isAnimating) return;
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        if (!currentSolution) {
+                            resultMessage.textContent = "Please select a solution first!";
+                            resultMessage.style.color = "#e74c3c";
+                            return;
+                        }
+                        testLitmus(this.dataset.type, currentSolutionType, currentSolutionColor);
+                    }
+                });
+            });
+            
+            // Beaker as drop target
+            beakerTarget.addEventListener('dragover', function(e) {
+                if (isQuizMode || isAnimating) return;
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+            });
+            
+            beakerTarget.addEventListener('drop', function(e) {
+                if (isQuizMode || isAnimating) return;
+                e.preventDefault();
+                if (!currentSolution) {
+                    resultMessage.textContent = "Please select a solution first!";
+                    resultMessage.style.color = "#e74c3c";
+                    return;
+                }
+                
+                const litmusType = e.dataTransfer.getData('text/plain');
+                testLitmus(litmusType, currentSolutionType, currentSolutionColor);
+            });
+            
+            // Function to update beaker appearance
+            function updateBeaker(solutionName, color) {
+                solution.style.backgroundColor = color;
+                solution.style.opacity = "0.7";
+                solutionLabel.textContent = solutionName.toUpperCase();
+            }
+            
+            // Function to test litmus reaction
+            function testLitmus(litmusType, solutionType, solutionColor, isQuiz = false) {
+                let result = "";
+                let newColor = "";
+                
+                if (litmusType === 'blue') {
+                    if (solutionType === 'acidic') {
+                        result = "Blue litmus paper turns RED in acidic solution!";
+                        newColor = "#e74c3c";
+                        correctAnswer = isQuiz ? "Red" : null;
+                    } else {
+                        result = "Blue litmus paper remains BLUE in " + solutionType + " solution!";
+                        newColor = "#3498db";
+                        correctAnswer = isQuiz ? "Blue" : null;
+                    }
+                } else if (litmusType === 'red') {
+                    if (solutionType === 'basic') {
+                        result = "Red litmus paper turns BLUE in basic solution!";
+                        newColor = "#3498db";
+                        correctAnswer = isQuiz ? "Blue" : null;
+                    } else {
+                        result = "Red litmus paper remains RED in " + solutionType + " solution!";
+                        newColor = "#e74c3c";
+                        correctAnswer = isQuiz ? "Red" : null;
+                    }
+                }
+                
+                isAnimating = true;
+                const litmusClone = document.createElement('div');
+                litmusClone.className = `litmus ${litmusType}`;
+                litmusClone.style.position = 'absolute';
+                litmusClone.style.width = '50px';
+                litmusClone.style.height = '120px';
+                litmusClone.style.top = '10%';
+                litmusClone.style.left = '50%';
+                litmusClone.style.transform = 'translate(-50%, -50%)';
+                litmusClone.style.zIndex = '10';
+                litmusClone.style.transition = 'all 1s ease';
+                beakerTarget.appendChild(litmusClone);
+                
+                setTimeout(() => {
+                    litmusClone.style.top = '50%';
+                    litmusClone.style.backgroundColor = newColor;
+                    
+                    if (!isQuiz) {
+                        resultMessage.textContent = result;
+                        resultMessage.style.color = newColor;
+                    }
+                }, 500);
+                
+                setTimeout(() => {
+                    beakerTarget.removeChild(litmusClone);
+                    isAnimating = false;
+                    if (isQuiz) {
+                        optionElements[0].focus();
+                    }
+                }, 3000);
+            }
+            
+            // Quiz mode toggle
+            quizToggleBtn.addEventListener('click', () => {
+                isQuizMode = !isQuizMode;
+                quizToggleBtn.textContent = `Quiz Mode: ${isQuizMode ? 'On' : 'Off'}`;
+                
+                if (isQuizMode) {
+                    quizContainer.style.display = 'block';
+                    scoreboard.style.display = 'block';
+                    resultMessage.style.display = 'none';
+                    litmusPapers.forEach(paper => {
+                        paper.classList.add('disabled');
+                        paper.setAttribute('draggable', 'false');
+                        paper.setAttribute('aria-disabled', 'true');
+                    });
+                    solutionButtons.forEach(btn => btn.disabled = true);
+                    generateQuizQuestion();
+                } else {
+                    quizContainer.style.display = 'none';
+                    scoreboard.style.display = 'none';
+                    resultMessage.style.display = 'block';
+                    litmusPapers.forEach(paper => {
+                        paper.classList.remove('disabled');
+                        paper.setAttribute('draggable', 'true');
+                        paper.setAttribute('aria-disabled', 'false');
+                    });
+                    solutionButtons.forEach(btn => btn.disabled = false);
+                    currentSolution = null;
+                    currentSolutionType = null;
+                    currentSolutionColor = null;
+                    litmusType = null; // Reset litmusType
+                    updateBeaker('', 'transparent');
+                    resultMessage.textContent = "Select a solution and drag a litmus paper to test!";
+                    resultMessage.style.color = "#333";
+                }
+            });
+            
+            function generateQuizQuestion() {
+                explanation.style.display = 'none';
+                checkAnswerBtn.disabled = true;
+                checkAnswerBtn.style.display = 'block';
+                nextQuestionBtn.style.display = 'none';
+                selectedOptionIndex = null;
+                quizOptions.innerHTML = '';
+                optionElements = [];
+                
+                // Randomly select solution and litmus paper
+                const solutions = [
+                    { name: 'water', type: 'neutral', color: '#3498db' },
+                    { name: 'hcl', type: 'acidic', color: '#e74c3c' },
+                    { name: 'naoh', type: 'basic', color: '#9b59b6' },
+                    { name: 'vinegar', type: 'acidic', color: '#f1c40f' },
+                    { name: 'soap', type: 'basic', color: '#2ecc71' }
+                ];
+                const litmusTypes = ['blue', 'red'];
+                
+                const selectedSolution = solutions[Math.floor(Math.random() * solutions.length)];
+                litmusType = litmusTypes[Math.floor(Math.random() * litmusTypes.length)]; // Assign to outer scope
+                
+                currentSolution = selectedSolution.name;
+                currentSolutionType = selectedSolution.type;
+                currentSolutionColor = selectedSolution.color;
+                
+                // Update beaker
+                updateBeaker(currentSolution, currentSolutionColor);
+                
+                quizQuestion.textContent = `What color will ${litmusType} litmus paper turn when dipped in ${currentSolution.toUpperCase()} (${currentSolutionType})?`;
+                
+                // Generate multiple-choice options
+                const options = [];
+                if (litmusType === 'blue') {
+                    if (currentSolutionType === 'acidic') {
+                        options.push('Red');
+                        correctAnswer = 'Red';
+                    } else {
+                        options.push('Blue');
+                        correctAnswer = 'Blue';
+                    }
+                } else {
+                    if (currentSolutionType === 'basic') {
+                        options.push('Blue');
+                        correctAnswer = 'Blue';
+                    } else {
+                        options.push('Red');
+                        correctAnswer = 'Red';
+                    }
+                }
+                
+                // Add distractors
+                const possibleOptions = ['Red', 'Blue', 'No Change', litmusType === 'blue' ? 'Green' : 'Yellow'];
+                const filteredOptions = possibleOptions.filter(opt => opt !== correctAnswer);
+                while (options.length < 4) {
+                    const randomOption = filteredOptions[Math.floor(Math.random() * filteredOptions.length)];
+                    if (!options.includes(randomOption)) {
+                        options.push(randomOption);
+                    }
+                }
+                options.sort(() => Math.random() - 0.5);
+                
+                options.forEach((option, index) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'quiz-option';
+                    optionElement.textContent = option;
+                    optionElement.dataset.index = index;
+                    optionElement.dataset.value = option;
+                    optionElement.tabIndex = 0;
+                    optionElement.setAttribute('role', 'radio');
+                    optionElement.setAttribute('aria-checked', 'false');
+                    
+                    optionElement.addEventListener('click', () => {
+                        optionElements.forEach(el => {
+                            el.classList.remove('selected');
+                            el.setAttribute('aria-checked', 'false');
+                        });
+                        optionElement.classList.add('selected');
+                        optionElement.setAttribute('aria-checked', 'true');
+                        selectedOptionIndex = index;
+                        checkAnswerBtn.disabled = false;
+                    });
+                    
+                    optionElement.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            optionElement.click();
+                        }
+                    });
+                    
+                    quizOptions.appendChild(optionElement);
+                    optionElements.push(optionElement);
+                });
+                
+                // Animate litmus paper
+                testLitmus(litmusType, currentSolutionType, currentSolutionColor, true);
+            }
+            
+            checkAnswerBtn.addEventListener('click', () => {
+                if (selectedOptionIndex === null) return;
+                
+                const selectedOption = optionElements[selectedOptionIndex];
+                const selectedValue = selectedOption.dataset.value;
+                
+                optionElements.forEach(option => {
+                    option.classList.remove('correct', 'incorrect');
+                    if (option.dataset.value === correctAnswer) {
+                        option.classList.add('correct');
+                    }
+                });
+                
+                let explanationText = '';
+                if (litmusType === 'blue') {
+                    explanationText = currentSolutionType === 'acidic' ?
+                        `Blue litmus paper turns red in acidic solutions like ${currentSolution.toUpperCase()}.` :
+                        `Blue litmus paper remains blue in ${currentSolutionType} solutions like ${currentSolution.toUpperCase()}.`;
+                } else if (litmusType === 'red') {
+                    explanationText = currentSolutionType === 'basic' ?
+                        `Red litmus paper turns blue in basic solutions like ${currentSolution.toUpperCase()}.` :
+                        `Red litmus paper remains red in ${currentSolutionType} solutions like ${currentSolution.toUpperCase()}.`;
+                }
+                
+                if (selectedValue === correctAnswer) {
+                    score += 10;
+                    scoreDisplay.textContent = score;
+                    explanation.innerHTML = `<strong>Correct!</strong> ${explanationText}`;
+                } else {
+                    selectedOption.classList.add('incorrect');
+                    explanation.innerHTML = `<strong>Incorrect.</strong> ${explanationText}`;
+                }
+                
+                explanation.style.display = 'block';
+                checkAnswerBtn.style.display = 'none';
+                nextQuestionBtn.style.display = 'block';
+                optionElements.forEach(option => {
+                    option.style.pointerEvents = 'none';
+                    option.setAttribute('aria-disabled', 'true');
+                });
+                nextQuestionBtn.focus();
+            });
+            
+            nextQuestionBtn.addEventListener('click', generateQuizQuestion);
+        });
+    </script>
+</body>
+</html>
