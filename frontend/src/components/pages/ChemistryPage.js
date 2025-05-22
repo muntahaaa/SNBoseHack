@@ -41,10 +41,10 @@ const ChemistryPage = () => {
       </button>
       <Header />
       <div className="subject-page-content">
-        <h1>Interactive Chemistry Simulations</h1>
+        <h1>রসায়ন শেখার মজার সিমুলেশন</h1>
         
         <div className="simulation-intro">
-          <p>Explore our interactive chemistry simulations for hands-on learning. Experience real chemical reactions and lab procedures through virtual experiments.</p>
+          <p>মজার ইন্টারঅ্যাকটিভ রসায়ন সিমুলেশনের মাধ্যমে শেখো হাতে-কলমে। ভার্চুয়াল ল্যাবে নানা রাসায়নিক বিক্রিয়া ও পরীক্ষা নিজের মতো করে করো!</p>
         </div>
         
         <div className="simulation-grid">
@@ -52,26 +52,32 @@ const ChemistryPage = () => {
             <div className="simulation-thumbnail">
               <img src={process.env.PUBLIC_URL + "/images/litmus-test-thumbnail.png"} alt="Litmus Test Simulation" />
             </div>
-            <h3>AR Litmus Test Lab</h3>
-            <p>Conduct virtual litmus tests to identify acids and bases. Learn about pH indicators through interactive experiments.</p>
-            <button className="simulation-btn" onClick={() => openSimulation('litmus.html')}>Launch Simulation</button>
+            <h3>লিটমাস পরীক্ষা করি</h3>
+            <p>ভার্চুয়াল লিটমাস পরীক্ষা করে চিনে নাও অ্যাসিড ও ক্ষার। ইন্টারঅ্যাকটিভ এক্সপেরিমেন্টের মাধ্যমে pH সূচকের ব্যবহার শিখো।</p>
+            <button className="simulation-btn" onClick={() => openSimulation('litmus.html')}>সিমুলেশন চালু করো</button>
           </div>
           
           <div className="simulation-card">
             <div className="simulation-thumbnail">
               <img src={process.env.PUBLIC_URL + "/images/molarity-calc-thumbnail.png"} alt="Molarity Calculator" />
             </div>
-            <h3>AR Molarity Calculator</h3>
-            <p>Calculate and visualize solution concentrations. Learn about molarity through interactive solution preparation.</p>
-            <button className="simulation-btn" onClick={() => openSimulation('molarity.html')}>Launch Simulation</button>
+            <h3>মোলারিটি নির্ণয় করি</h3>
+            <p>দ্রবণের ঘনত্ব হিসাব করো ও চিত্রের মাধ্যমে বোঝো। ইন্টারঅ্যাকটিভভাবে দ্রবণ তৈরি করে মোলারিটি সম্পর্কে শিখো।</p>
+            <button className="simulation-btn" onClick={() => openSimulation('molarity.html')}>সিমুলেশন চালু করো</button>
           </div>
         </div>
       </div>
       <div className="page-container">
-        <div className="chatbot-outer-container">
-          <div className={`chatbot-wrapper ${isChatbotOpen ? 'open' : 'minimized'}`}>
+        <div className="chatbot-outer-container">          <div className={`chatbot-wrapper ${isChatbotOpen ? 'open' : 'minimized'}`}>
             <div className={`chatbot-toggle-header ${theme}`} onClick={toggleChatbot}>
-              <h3>Chemistry Expert</h3>
+              <div className="chatbot-header-content">
+                <img 
+                  src={process.env.PUBLIC_URL + "/images/scientist.png"} 
+                  alt="Scientist icon" 
+                  className="chatbot-icon"
+                />
+                <h3>চলো কেমিস্ট্রি এক্সপার্ট এর সাথে কথা বলি</h3>
+              </div>
               <span className="chatbot-toggle">{isChatbotOpen ? '−' : '+'}</span>
             </div>
             {isChatbotOpen && (

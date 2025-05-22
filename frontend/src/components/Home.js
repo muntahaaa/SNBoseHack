@@ -12,10 +12,7 @@ const Home = () => {
           <source src={process.env.PUBLIC_URL + "/videos/cover.mp4"} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-        {/* <div className="hero-overlay">
-          <h1>Welcome to Educational Platform</h1>
-          <p>Explore the world of science and mathematics</p>
-        </div> */}
+       
       </section>
 
       <div className="subject-sections">        <section className="subject-section math-section">

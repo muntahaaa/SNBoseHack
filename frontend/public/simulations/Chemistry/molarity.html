@@ -405,19 +405,19 @@
 <body>
     <button id="learnButton" style="position: fixed; bottom: 40px; right: 60px; z-index: 1000;">মোলারিটি সম্পর্কে জানি</button>
      <button class="back-button" onclick="window.close()">Back to Chemistry Page</button>
-    <h1>AR Molarity Calculator</h1>
+    <h1>মোলারিটি নির্ণয় করি</h1>
     
     <div class="container">
         <div class="left-panel">
             <div class="control-group">
                 <div class="slider-container">
-                    <label for="volume-slider">Solution Volume:</label>
+                    <label for="volume-slider">দ্রবণের আয়তন:</label>
                     <input type="range" id="volume-slider" class="slider" min="50" max="1000" step="10" value="500" aria-label="Solution volume in milliliters">
                     <span id="volume-display" class="value-display">500 mL</span>
                 </div>
                 
                 <div class="slider-container">
-                    <label for="weight-slider">Solute Weight:</label>
+                    <label for="weight-slider">দ্রবের ভর:</label>
                     <input type="range" id="weight-slider" class="slider" min="1" max="50" step="1" value="10" aria-label="Solute weight in grams">
                     <span id="weight-display" class="value-display">10 g</span>
                 </div>
@@ -442,7 +442,7 @@
     </div>
     
     <div class="bottom-panel">
-        <h3>Select a Solute:</h3>
+        <h3>একটি দ্রবণ সিলেক্ট করি:</h3>
         <button class="solute-btn active" data-solute="NaOH" data-color="#3498db" data-mm="40.00" aria-label="Select NaOH solute">NaOH</button>
         <button class="solute-btn" data-solute="HCl" data-color="#fcff9b" data-mm="36.46" aria-label="Select HCl solute">HCl</button>
         <button class="solute-btn" data-solute="NaCl" data-color="#3498db" data-mm="58.44" aria-label="Select NaCl solute">NaCl</button>

@@ -42,10 +42,10 @@ Guidelines:
       </button>
       <Header />
       <div className="subject-page-content">
-        <h1>Interactive Physics Simulations</h1>
+        <h1>ফিজিক্স শেখার মজার সিমুলেশন</h1>
         
         <div className="simulation-intro">
-          <p>Explore our interactive physics simulations for hands-on learning. Experience real-world physics concepts through virtual experiments.</p>
+          <p>হাতে-কলমে শেখার জন্য আমাদের ইন্টারঅ্যাকটিভ পদার্থবিজ্ঞান সিমুলেশনগুলো অন্বেষণ করো। ভার্চুয়াল এক্সপেরিমেন্টের মাধ্যমে বাস্তব জীবনের পদার্থবিজ্ঞানের ধারণাগুলো অনুভব করো।</p>
         </div>
         
         <div className="simulation-grid">
@@ -53,26 +53,34 @@ Guidelines:
             <div className="simulation-thumbnail">
               <img src="/images/ohms-law-thumbnail.png" alt="Ohm's Law Simulation" />
             </div>
-            <h3>Ohm's Law Interactive Lab</h3>
-            <p>Explore the relationship between voltage, current, and resistance in electrical circuits. Conduct virtual experiments to understand Ohm's Law.</p>
-            <button className="simulation-btn" onClick={() => openSimulation('ohms-law.html')}>Launch Simulation</button>
+            <h3>ওহমের সূত্র ইন্টারঅ্যাকটিভ ল্যাব</h3>
+            <p>বিদ্যুৎ প্রবাহ, ভোল্টেজ ও রোধের মধ্যে সম্পর্ক অন্বেষণ করো। ভার্চুয়াল পরীক্ষার মাধ্যমে ওহমের সূত্র সম্পর্কে বুঝে নাও।
+
+</p>
+            <button className="simulation-btn" onClick={() => openSimulation('ohms-law.html')}>সিমুলেশন চালু করো</button>
           </div>
           
           <div className="simulation-card">
             <div className="simulation-thumbnail">
               <img src="/images/weight-mass-thumbnail.png" alt="Weight and Mass Simulation" />
             </div>
-            <h3>Weight and Mass Explorer</h3>
-            <p>Understand the difference between weight and mass, and how gravity affects objects differently across the universe.</p>
-            <button className="simulation-btn" onClick={() => openSimulation('weight-mass.html')}>Launch Simulation</button>
+            <h3>ভর ও ওজন সম্পর্কে জানো</h3>
+            <p>ভর ও ওজনের পার্থক্য বোঝো এবং কিভাবে মহাকাশের বিভিন্ন স্থানে মাধ্যাকর্ষণ বস্তুর ওপর প্রভাব ফেলে তা শিখো।</p>
+            <button className="simulation-btn" onClick={() => openSimulation('weight-mass.html')}>সিমুলেশন চালু করো</button>
           </div>
         </div>
-      </div>
-      <div className="page-container">               
+      </div>      <div className="page-container">               
         <div className="chatbot-outer-container">
           <div className={`chatbot-wrapper ${isChatbotOpen ? 'open' : 'minimized'}`}>
             <div className={`chatbot-toggle-header ${theme}`} onClick={toggleChatbot}>
-              <h3>Physics Tutor</h3>
+              <div className="chatbot-header-content">
+                <img 
+                  src={process.env.PUBLIC_URL + "/images/scientist.png"} 
+                  alt="Scientist icon" 
+                  className="chatbot-icon"
+                />
+                <h3>চলো ফিজিক্স টিউটর এর সাথে কথা বলি</h3>
+              </div>
               <span className="chatbot-toggle">{isChatbotOpen ? '−' : '+'}</span>
             </div>
             {isChatbotOpen && (

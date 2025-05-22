@@ -41,10 +41,10 @@ Guidelines:
       </button>
       <Header />
       <div className="subject-page-content">
-        <h1>Interactive Mathematics Simulations</h1>
+        <h1>অঙ্ক শেখার মজার সিমুলেশন</h1>
         
         <div className="simulation-intro">
-          <p>Explore our interactive mathematical simulations for hands-on learning. Click on any simulation below to begin.</p>
+          <p>হাতে-কলমে শেখার জন্য গণিতের ইন্টারঅ্যাকটিভ সিমুলেশনগুলো অন্বেষণ করো। নিচের যেকোনো সিমুলেশনে ক্লিক করে শুরু করো।</p>
         </div>
         
         <div className="simulation-grid">
@@ -52,27 +52,33 @@ Guidelines:
             <div className="simulation-thumbnail">
               <img src={process.env.PUBLIC_URL + "/images/shape-quiz-thumbnail.png"} alt="Quadrilateral Explorer" />
             </div>
-            <h3>Interactive Quadrilateral Explorer</h3>
-            <p>Explore different shapes and learn about their properties. Test your knowledge with interactive quizzes.</p>
-            <button className="simulation-btn" onClick={() => openSimulation('shapeQuiz.html')}>Launch Simulation</button>
+            <h3>চতুর্ভুজ সম্পর্কে জানো</h3>
+            <p>বিভিন্ন আকৃতি অন্বেষণ করো ও তাদের বৈশিষ্ট্য সম্পর্কে জানো। ইন্টারঅ্যাকটিভ কুইজের মাধ্যমে তোমার জ্ঞান যাচাই করো।</p>
+            <button className="simulation-btn" onClick={() => openSimulation('shapeQuiz.html')}>সিমুলেশন চালু করো</button>
           </div>
           
           <div className="simulation-card">
             <div className="simulation-thumbnail">
               <img src={process.env.PUBLIC_URL + "/images/number-line-thumbnail.png"} alt="Number Line Simulation" />
             </div>
-            <h3>Number Line Simulation</h3>
-            <p>Practice number line concepts and test your understanding of numerical relationships.</p>
-            <button className="simulation-btn" onClick={() => openSimulation('numberLineQuiz.html')}>Launch Simulation</button>
+            <h3>সংখ্যা রেখা সম্পর্কে জানো</h3>
+            <p>নাম্বার লাইনের ধারণাগুলো অনুশীলন করো এবং সংখ্যাগত সম্পর্ক সম্পর্কে তোমার বোঝাপড়া যাচাই করো।</p>
+            <button className="simulation-btn" onClick={() => openSimulation('numberLineQuiz.html')}>সিমুলেশন চালু করো</button>
           </div>
         </div>
       </div>
       <div className="page-container">
-               
-        <div className="chatbot-outer-container">
+                 <div className="chatbot-outer-container">
           <div className={`chatbot-wrapper ${isChatbotOpen ? 'open' : 'minimized'}`}>
             <div className={`chatbot-toggle-header ${theme}`} onClick={toggleChatbot}>
-              <h3>Math Assistant</h3>
+              <div className="chatbot-header-content">
+                <img 
+                  src={process.env.PUBLIC_URL + "/images/scientist.png"} 
+                  alt="Scientist icon" 
+                  className="chatbot-icon"
+                />
+                <h3>চলো ম্যাথ এক্সপার্ট এর সাথে কথা বলি</h3>
+              </div>
               <span className="chatbot-toggle">{isChatbotOpen ? '−' : '+'}</span>
             </div>
             {isChatbotOpen && (

@@ -402,13 +402,14 @@
     <button id="learnButton" style="position: fixed; bottom: 40px; right: 60px; z-index: 1000;">এসো লিটমাসের ব্যবহার শিখি</button>
     <div class="container">
          <button class="back-button" onclick="window.close()">Back to Chemistry Page</button>
-        <h1>Litmus Test AR Experience</h1>
+        <h1>লিটমাস পরীক্ষা</h1>
+        <h3 style="background-color: #d1cccc; padding: 10px;">একটি দ্রবণ সিলেক্ট করে সেখানে লিটমাস কাগজ ডুবিয়ে দেখি</h3>
         
         <div class="lab-setup">
             <div class="litmus-container">
-                <div class="litmus-title">Litmus Papers</div>
-                <div class="litmus blue" draggable="true" data-type="blue" role="button" aria-label="Blue litmus paper" tabindex="0">Blue Litmus</div>
-                <div class="litmus red" draggable="true" data-type="red" role="button" aria-label="Red litmus paper" tabindex="0">Red Litmus</div>
+                <div class="litmus-title">লিটমাস কাগজ</div>
+                <div class="litmus blue" draggable="true" data-type="blue" role="button" aria-label="Blue litmus paper" tabindex="0">নীল লিটমাস</div>
+                <div class="litmus red" draggable="true" data-type="red" role="button" aria-label="Red litmus paper" tabindex="0">লাল লিটমাস</div>
             </div>
             
             
@@ -419,11 +420,11 @@
                 </div>
                 
                 <div class="solution-buttons">
-                    <button class="solution-btn" style="background-color: #3498db; color: white;" data-solution="water" data-type="neutral" aria-label="Select Water (Neutral)">Water (Neutral)</button>
-                    <button class="solution-btn" style="background-color: #e74c3c; color: white;" data-solution="hcl" data-type="acidic" aria-label="Select HCl (Acidic)">HCl (Acidic)</button>
-                    <button class="solution-btn" style="background-color: #9b59b6; color: white;" data-solution="naoh" data-type="basic" aria-label="Select NaOH (Basic)">NaOH (Basic)</button>
-                    <button class="solution-btn" style="background-color: #f1c40f; color: white;" data-solution="vinegar" data-type="acidic" aria-label="Select Vinegar (Acidic)">Vinegar (Acidic)</button>
-                    <button class="solution-btn" style="background-color: #2ecc71; color: white;" data-solution="soap" data-type="basic" aria-label="Select Soap (Basic)">Soap (Basic)</button>
+                    <button class="solution-btn" style="background-color: #3498db; color: white;" data-solution="water" data-type="neutral" aria-label="Select Water (Neutral)">পানি (নিরপেক্ষ)</button>
+                    <button class="solution-btn" style="background-color: #e74c3c; color: white;" data-solution="hcl" data-type="acidic" aria-label="Select HCl (Acidic)">HCl-হাইড্রোক্লোরিক অ্যাসিড (এসিডিক)</button>
+                    <button class="solution-btn" style="background-color: #9b59b6; color: white;" data-solution="naoh" data-type="basic" aria-label="Select NaOH (Basic)">NaOH-সোডিয়াম ক্লোরাইড (ক্ষারীয়)</button>
+                    <button class="solution-btn" style="background-color: #f1c40f; color: white;" data-solution="vinegar" data-type="acidic" aria-label="Select Vinegar (Acidic)">ভিনেগার (এসিডিক)</button>
+                    <button class="solution-btn" style="background-color: #2ecc71; color: white;" data-solution="soap" data-type="basic" aria-label="Select Soap (Basic)">সাবান (ক্ষারীয়)</button>
                 </div>
             
         </div>
@@ -443,10 +444,10 @@
         </div>
         
         <div class="info-panel">
-            <div class="info-title">Litmus Test Information:</div>
-            <p>• Blue litmus paper turns red in acidic solutions and remains blue in neutral or basic solutions.</p>
-            <p>• Red litmus paper turns blue in basic solutions and remains red in neutral or acidic solutions.</p>
-            <div class="result-message" id="result-message">Select a solution and drag a litmus paper to test!</div>
+            <div class="info-title">লিটমাস পরীক্ষা সম্পর্কিত তথ্য:</div>
+            <p>• নীল লিটমাস কাগজ এসিডিক দ্রবণে লাল বর্ণ ধারণ করে এবং ক্ষারীয় দ্রবণে অপরিবর্তনশীল থাকে</p>
+            <p>• লাল লিটমাস কাগজ ক্ষারীয় দ্রবণে নীল বর্ণ ধারণ করে এবং এসিডিক দ্রবণে অপরিবর্তনশীল থাকে</p>
+            <p>• লিটমাস কাগজের রঙ পরিবর্তন হলে দ্রবণের এসিডিক বা ক্ষারীয় প্রকৃতি বোঝা যায়</p>
         </div>
         
         <button class="quiz-toggle-btn" id="quiz-toggle-btn" aria-label="Toggle quiz mode">Quiz Mode: Off</button>

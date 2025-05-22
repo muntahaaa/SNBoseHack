@@ -488,8 +488,8 @@
   background: #2d2d2d; /* Default to dark theme */
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  width: 400px; /* Adjust as needed */
-  height: 500px;
+  width: 450px; /* Increased from 400px */
+  height: 550px; /* Increased from 500px */
   display: flex;
   flex-direction: column; /* Header at top by default */
   transition: all 0.3s ease;
@@ -506,7 +506,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 15px; 
+  padding: 8px 15px; /* Increased padding to 20px (10px + 10px) */
   line-height: 1;
   background: #3d3d3d; 
   cursor: pointer;
@@ -519,7 +519,7 @@
 
 .chatbot-toggle-header h3 {
   margin: 0;
-  font-size: 16px;
+  font-size: 18px; /* Increased from 16px */
   color: #f0f0f0;
 }
 
@@ -536,9 +536,22 @@
   color: #333333;
 }
 
+/* Added for scientist icon */
+.chatbot-header-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chatbot-icon {
+  width: 28px; /* Increased from 24px */
+  height: 28px; /* Increased from 24px */
+  object-fit: contain;
+}
+
 /* Open and minimized states */
 .chatbot-wrapper.open {
-  max-height: 500px; /* Adjust as needed */
+  max-height: 550px; /* Increased from 500px to match the new height */
   border-radius: 8px 8px 0 0; /* Rounded top corners, flat bottom */
 }
 

@@ -293,7 +293,7 @@
 <body>
     <button id="learnButton" style="position: fixed; bottom: 40px; right: 60px; z-index: 1000;">এসো জ্যামিতিক আকার শিখি</button>
     <button class="back-button" onclick="window.close()">Back to Math Page</button>
-    <h1>Interactive Quadrilateral Explorer</h1>
+    <h1>চতুর্ভুজের আকৃতি সম্পর্কে জানি</h1>
     
     <div class="scoreboard" id="scoreboard" role="status">
         Score: <span id="score">0</span>
@@ -306,6 +306,7 @@
     <div class="quiz-container" id="quiz-container">
         <div class="quiz-question" id="quiz-question">
             What type of quadrilateral is shown?
+            (নিচের চতুর্ভুজটি কি আকৃতির?)
         </div>
         <div class="quiz-options" id="quiz-options" role="radiogroup">
             <!-- Quiz options will be populated here -->
@@ -617,17 +618,17 @@
             let shapeType = "Irregular";
             
             if (allSidesEqual() && allAngles90()) {
-                shapeType = "Square";
+                shapeType = "Square(বর্গ)";
             } else if (allAngles90() && oppositeSidesEqual()) {
-                shapeType = "Rectangle";
+                shapeType = "Rectangle(আয়তক্ষেত্র)";
             } else if (allSidesEqual() && oppositeSidesParallel()) {
-                shapeType = "Rhombus";
+                shapeType = "Rhombus(রম্বস)";
             } else if (oppositeSidesParallel() && oppositeSidesEqual()) {
-                shapeType = "Parallelogram";
+                shapeType = "Parallelogram(সামান্তরিক)";
             } else if (exactlyOnePairParallel()) {
-                shapeType = "Trapezoid";
+                shapeType = "Trapezoid(ট্রাপিজিয়াম)";
             } else if (hasAdjacentEqualSides()) {
-                shapeType = "Kite";
+                shapeType = "Kite(ঘুড়ি)";
             }
             
             shapeTypeDisplay.textContent = shapeType;
