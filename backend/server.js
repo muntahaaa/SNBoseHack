@@ -20,8 +20,21 @@ const volunteerRoutes = require('./routes/volunteerRoutes');
 const app = express();
 
 // Enhanced Cors configuration
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://shikhon360.vercel.app'
+];
+
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' ? 'your-production-domain' : 'http://localhost:3000',
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
