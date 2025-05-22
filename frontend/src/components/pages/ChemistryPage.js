@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '../Header';
 import '../../styles/SubjectPage.css';
 import { useNavigate } from 'react-router-dom';
@@ -6,7 +6,7 @@ import Chatbot from '../Chatbot/Chatbot';
 
 const ChemistryPage = () => {
   const navigate = useNavigate();
-  
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false); // State to toggle chatbot
 
   const chemistryPromptContext = `
     You are a helpful and intelligent chemistry tutor designed to help students grasp chemical concepts, reactions, and lab practices across general, organic, inorganic, and physical chemistry.
@@ -17,20 +17,25 @@ const ChemistryPage = () => {
       - For detailed or mechanistic questions, explain step-by-step.
     - Use properly formatted chemical equations and IUPAC nomenclature.
     - Avoid unnecessary elaboration for simple reactions or facts.
-    - Highlight practical applications and lab safety only when contextually appropriate.
+    - Highdark practical applications and lab safety only when contextually appropriate.
     - Use real-world examples and visual descriptions to clarify complex concepts.
     - Explain the relationship between molecular structure and chemical properties when relevant.
     - Include mnemonics or analogies only when helpful for understanding.
   `;
 
   const openSimulation = (filename) => {
-   //window.open(process.env.PUBLIC_URL + `/simulations/Math/${filename}`, '_blank');
     window.open(process.env.PUBLIC_URL + `/simulations/Chemistry/${filename}`, '_blank');
   };
 
+  const toggleChatbot = () => {
+    setIsChatbotOpen(!isChatbotOpen);
+  };
+
+  const theme = "dark"; // Define theme to match Chatbot prop
+
   return (
     <div className="subject-page">
-        <button className="page-back-button" onClick={() => navigate('/')}>
+      <button className="page-back-button" onClick={() => navigate('/')}>
         <span className="back-arrow">←</span>
         Back to Home
       </button>
@@ -62,22 +67,22 @@ const ChemistryPage = () => {
           </div>
         </div>
       </div>
-
       <div className="page-container">
-        <div className="page-header">
-          <h2>Chemistry Lab Assistant</h2>
-          <p>Explore elements, compounds, reactions, and chemical principles</p>
-        </div>
-        
-        <Chatbot 
-          promptContext={chemistryPromptContext}
-          title="Chemistry Expert"
-          description="Ask me about chemical reactions, structures, or lab procedures!"
-          theme="light"
-        />
-        
-        <div className="page-footer">
-          <p>Tip: Try asking about periodic trends, reaction types, or molecular structures!</p>
+        <div className="chatbot-outer-container">
+          <div className={`chatbot-wrapper ${isChatbotOpen ? 'open' : 'minimized'}`}>
+            <div className={`chatbot-toggle-header ${theme}`} onClick={toggleChatbot}>
+              <h3>Chemistry Expert</h3>
+              <span className="chatbot-toggle">{isChatbotOpen ? '−' : '+'}</span>
+            </div>
+            {isChatbotOpen && (
+              <Chatbot 
+                promptContext={chemistryPromptContext}
+                title="Chemistry Expert"
+                description="Ask me about chemical reactions, structures, or lab procedures!"
+                theme="dark"
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '../Header';
 import '../../styles/SubjectPage.css';
 import { useNavigate } from 'react-router-dom';
@@ -6,8 +6,9 @@ import Chatbot from '../Chatbot/Chatbot';
 
 const PhysicsPage = () => {
   const navigate = useNavigate();
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false); // State to toggle chatbot
 
-   const physicsPromptContext = `
+  const physicsPromptContext = `
     You are a helpful and intelligent physics tutor designed to assist students in understanding both fundamental and advanced concepts in physics.
 
 Guidelines:
@@ -21,12 +22,17 @@ Guidelines:
 - Include distinctions between classical and modern (e.g., quantum, relativity) physics when relevant.
 - Introduce historical or experimental context only if it helps comprehension.
 - Encourage curiosity and critical thinking, but keep answers efficient and targeted.
-
   `;
   
   const openSimulation = (filename) => {
     window.open(`/simulations/Physics/${filename}`, '_blank');
   };
+
+  const toggleChatbot = () => {
+    setIsChatbotOpen(!isChatbotOpen);
+  };
+
+  const theme = "dark"; // Define theme to match Chatbot prop
 
   return (
     <div className="subject-page">
@@ -62,23 +68,24 @@ Guidelines:
           </div>
         </div>
       </div>
-      <div className="page-container">
-      <div className="page-header">
-        <h1>Physics Learning Hub</h1>
-        <p>Explore mechanics, thermodynamics, electromagnetism, and quantum physics</p>
+      <div className="page-container">               
+        <div className="chatbot-outer-container">
+          <div className={`chatbot-wrapper ${isChatbotOpen ? 'open' : 'minimized'}`}>
+            <div className={`chatbot-toggle-header ${theme}`} onClick={toggleChatbot}>
+              <h3>Physics Tutor</h3>
+              <span className="chatbot-toggle">{isChatbotOpen ? '−' : '+'}</span>
+            </div>
+            {isChatbotOpen && (
+              <Chatbot 
+                promptContext={physicsPromptContext}
+                title="Physics Tutor"
+                description="I can help explain physics concepts and solve problems!"
+                theme="dark"
+              />
+            )}
+          </div>
+        </div>
       </div>
-      
-      <Chatbot 
-        promptContext={physicsPromptContext}
-        title="Physics Tutor"
-        description="I can help explain physics concepts and solve problems!"
-        theme="dark"
-      />
-      
-      <div className="page-footer">
-        <p>Tip: Try asking about forces, energy transformations, or quantum phenomena!</p>
-      </div>
-    </div>
     </div>
   );
 };

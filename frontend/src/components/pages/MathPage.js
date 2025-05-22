@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '../Header';
 import '../../styles/SubjectPage.css';
 import { useNavigate } from 'react-router-dom';
@@ -6,8 +6,9 @@ import Chatbot from '../Chatbot/Chatbot';
 
 const MathPage = () => {
   const navigate = useNavigate();
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false); // State to toggle chatbot
 
-   const mathPromptContext = `
+  const mathPromptContext = `
     You are a helpful and intelligent math tutor designed to assist students of all levels.
 
 Guidelines:
@@ -25,6 +26,12 @@ Guidelines:
   const openSimulation = (filename) => {
     window.open(process.env.PUBLIC_URL + `/simulations/Math/${filename}`, '_blank');
   };
+
+  const toggleChatbot = () => {
+    setIsChatbotOpen(!isChatbotOpen);
+  };
+
+  const theme = "dark"; // Define theme to match Chatbot prop
 
   return (
     <div className="subject-page">
@@ -60,23 +67,25 @@ Guidelines:
           </div>
         </div>
       </div>
-       <div className="page-container">
-      <div className="page-header">
-        <h1>Math Learning Assistant</h1>
-        <p>Get help with algebra, calculus, geometry, and more!</p>
+      <div className="page-container">
+               
+        <div className="chatbot-outer-container">
+          <div className={`chatbot-wrapper ${isChatbotOpen ? 'open' : 'minimized'}`}>
+            <div className={`chatbot-toggle-header ${theme}`} onClick={toggleChatbot}>
+              <h3>Math Assistant</h3>
+              <span className="chatbot-toggle">{isChatbotOpen ? '−' : '+'}</span>
+            </div>
+            {isChatbotOpen && (
+              <Chatbot 
+                promptContext={mathPromptContext}
+                title="Math Assistant"
+                description="Ask me about any math concept or problem!"
+                theme="dark"
+              />
+            )}
+          </div>
+        </div>
       </div>
-      
-      <Chatbot 
-        promptContext={mathPromptContext}
-        title="Math Assistant"
-        description="Ask me about any math concept or problem!"
-        theme="light"
-      />
-      
-      <div className="page-footer">
-        <p>Tip: Try asking about equations, formulas, or step-by-step solutions!</p>
-      </div>
-    </div>
     </div>
   );
 };

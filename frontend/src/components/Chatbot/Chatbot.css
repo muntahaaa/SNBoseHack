@@ -474,3 +474,78 @@
     box-shadow: 0 0 0 0 rgba(77, 163, 255, 0);
   }
 }
+
+/* Outer container for positioning the chatbot in the bottom right */
+.chatbot-outer-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+/* Wrapper for the chatbot, controlling toggle behavior and upward expansion */
+.chatbot-wrapper {
+  background: #2d2d2d; /* Default to dark theme */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  width: 400px; /* Adjust as needed */
+  height: 500px;
+  display: flex;
+  flex-direction: column; /* Header at top by default */
+  transition: all 0.3s ease;
+}
+
+/* Theme variations for wrapper */
+.chatbot-wrapper.light {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+}
+
+/* Toggle header for minimize/maximize */
+.chatbot-toggle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px; 
+  line-height: 1;
+  background: #3d3d3d; 
+  cursor: pointer;
+  user-select: none;
+}
+
+.chatbot-toggle-header.light {
+  background: #f9f9f9;
+}
+
+.chatbot-toggle-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #f0f0f0;
+}
+
+.chatbot-toggle-header.light h3 {
+  color: #333333;
+}
+
+.chatbot-toggle-header .chatbot-toggle {
+  font-size: 20px;
+  color: #f0f0f0;
+}
+
+.chatbot-toggle-header.light .chatbot-toggle {
+  color: #333333;
+}
+
+/* Open and minimized states */
+.chatbot-wrapper.open {
+  max-height: 500px; /* Adjust as needed */
+  border-radius: 8px 8px 0 0; /* Rounded top corners, flat bottom */
+}
+
+/* Minimized state: move header to bottom */
+.chatbot-wrapper.minimized {
+  max-height: 40px; /* Only show the toggle header */
+  flex-direction: column-reverse; /* Header at bottom */
+  border-radius: 8px; /* Full radius when minimized */
+  overflow: hidden;
+}
