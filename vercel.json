@@ -1,5 +1,23 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
+  "version": 2,
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "buildCommand": "cd frontend && npm install && npm run build",
+        "outputDirectory": "frontend/build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*\\.(js|json|css|ico|png|jpg|jpeg|svg|gif|webm|mp4)$)",
+      "dest": "/frontend/build/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/build/index.html"
+    }
   ]
 }
