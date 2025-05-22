@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth } from '../../context/AuthContext';
+import AuthContext from '../../context/AuthContext';
 import './VolunteerBoard.css';
+
+
+
 
 const VolunteerBoard = () => {
   const [opportunities, setOpportunities] = useState([]);
@@ -12,7 +16,7 @@ const VolunteerBoard = () => {
     status: 'all',
     category: 'all'
   });
-  const { user } = useAuth();
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     fetchOpportunities();
