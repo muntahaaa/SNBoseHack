@@ -1,13 +1,23 @@
-# SNBoseHack
+# SNBoseHack - Interactive Educational Platform
 
-## Features
+A modern, interactive educational platform featuring Physics, Mathematics, and Chemistry simulations with AI chatbot assistance, designed to make learning engaging and accessible.
 
-### Text-to-Speech Integration
+## 🌟 Features
 
-The chatbot now includes a "Hear the answer" button that allows users to listen to the AI's response. This feature uses Microsoft Azure's Text-to-Speech API to convert text responses into natural-sounding speech.
+### 🧠 Interactive Subject Simulations
+- **Physics**: Interactive simulations on weight-mass relationships and Ohm's law
+- **Chemistry**: Litmus test and molarity calculation simulations
+- **Mathematics**: Shape identification and number line quizzes
+
+### 🤖 AI Chatbot Tutor
+- Subject-specific AI tutors for Physics, Chemistry, and Mathematics
+- Natural language processing to answer student questions
+- Context-aware responses tailored to educational content
+
+### 🔊 Text-to-Speech Integration
+The chatbot includes a "Hear the answer" button that allows users to listen to the AI's response. This feature uses Microsoft Azure's Text-to-Speech API to convert text responses into natural-sounding speech.
 
 #### How It Works:
-
 1. When the chatbot provides a text response, a "Hear the answer" button appears at the bottom of the message
 2. Clicking this button sends the response text to the backend
 3. The backend uses Azure's TTS API to generate an audio file
@@ -15,20 +25,88 @@ The chatbot now includes a "Hear the answer" button that allows users to listen 
 5. Once loaded, users can play, pause, and reset the audio as needed
 
 #### Controls:
-
 - **Hear the answer**: Initial button to convert text to speech
 - **Play/Pause**: Toggle button to control audio playback
 - **Reset**: Button to clear the current audio and free up resources
 
-#### Configuration:
+### 🔬 Research Desk
+- Platform for student research collaborations
+- Challenges and volunteer opportunities for hands-on learning
+- Resource sharing and community interaction
 
-The TTS feature uses the following environment variables:
-- `AZURE_TTS_KEY`: Your Azure Cognitive Services API key
-- `AZURE_TTS_REGION`: Your Azure region (e.g., "southeastasia")
+## 🛠️ Technology Stack
 
-#### Default Voice Settings:
+### Frontend
+- React.js with React Router for navigation
+- Modern CSS with responsive design principles
+- Interactive animations and visualizations
 
-- Language: en-US
-- Voice: en-US-AriaNeural
+### Backend
+- Node.js with Express framework
+- MongoDB for data storage
+- JWT for authentication
 
-These settings can be customized by modifying the parameters in the ChatMessage component.
+### AI & Speech
+- Google's Generative AI for the chatbot functionality
+- Microsoft Azure's Text-to-Speech API for audio responses
+
+## 📊 Educational Approach
+
+Our platform focuses on:
+- **Visual Learning**: Through interactive simulations
+- **AI-Assisted Tutoring**: Personalized help when needed
+- **Multilingual Support**: Content in multiple languages, including Bengali
+- **Accessibility**: Text-to-speech features for different learning needs
+
+## 💻 Installation and Setup
+
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn
+- MongoDB (local or Atlas connection)
+
+### Environment Variables
+Create a `.env` file in the backend directory with the following variables:
+
+```
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+AZURE_TTS_KEY=your_azure_tts_api_key
+AZURE_TTS_REGION=your_azure_region
+GOOGLE_AI_API_KEY=your_google_ai_api_key
+```
+
+### Frontend Setup
+```bash
+cd frontend
+npm install
+npm start
+```
+
+### Backend Setup
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+## 🚀 Deployment
+The application is configured for deployment on Vercel:
+- Frontend: Static site deployment
+- Backend: Serverless functions
+
+## 👩‍💻 Contributing
+We welcome contributions to enhance the educational experience!
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+This project is licensed under the MIT License.
+
+## 🙏 Acknowledgements
+- S.N. Bose National Centre for Basic Sciences for inspiration
+- All contributors and educators who provided feedback

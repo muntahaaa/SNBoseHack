@@ -18,8 +18,8 @@ const Home = () => {
       <div className="subject-sections">        
         <section className="subject-section math-section">
           <div className="subject-content">
-            <h2>Mathematics</h2>
-            <p>Explore the fascinating world of numbers, shapes, and patterns. Discover the beauty of mathematical concepts and their applications in solving real-world problems.</p>
+            <h2>গণিত</h2>
+            <p>সংখ্যা, আকার ও প্যাটার্নের বিস্ময়কর জগতে প্রবেশ করো। গণিতের সৌন্দর্য ও বাস্তব জীবনের সমস্যার সমাধানে এর প্রয়োগ সম্পর্কে জানো ও শিখো।</p>
             <Link to="/math" className="subject-btn">Go to Math Page</Link>
           </div>
           <div className="subject-video">
@@ -32,9 +32,8 @@ const Home = () => {
 
         <section className="subject-section physics-section">
           <div className="subject-content">
-            <h2>Physics</h2>
-            <p>Discover the fundamental laws that govern the universe. Explore motion, energy, forces,
-      and the building blocks of matter through interactive experiments and simulations.</p>
+            <h2>পদার্থবিজ্ঞান</h2>
+            <p>বিশ্বের পরিচালনাকারী মৌলিক নিয়মগুলো আবিষ্কার করো। গতিবিদ্যা, শক্তি, বল এবং বস্তুর গঠন সম্পর্কে জানো ইন্টারঅ্যাকটিভ এক্সপেরিমেন্ট ও সিমুলেশনের মাধ্যমে।</p>
             <Link to="/physics" className="subject-btn">Go to Physics Page</Link>
           </div>
           <div className="subject-video">
@@ -47,8 +46,8 @@ const Home = () => {
         
         <section className="subject-section chemistry-section">
           <div className="subject-content">
-            <h2>Chemistry</h2>
-            <p>Learn about elements, compounds, and chemical reactions that shape our world. Explore atomic structure, chemical bonding, and the fascinating interactions of matter.</p>
+            <h2>রসায়ন</h2>
+            <p>উপাদান, যৌগ এবং রাসায়নিক বিক্রিয়া সম্পর্কে জানো, যা আমাদের চারপাশের জগতকে গঠিত করে। পরমাণুর গঠন, রাসায়নিক বন্ধন এবং বস্তুদের চমকপ্রদ মিথস্ক্রিয়া অন্বেষণ করো।</p>
             <Link to="/chemistry" className="subject-btn">Go to Chemistry Page</Link>
           </div>
             <div className="subject-video">
@@ -65,8 +64,9 @@ const Home = () => {
           color: '#ffffff',
           textAlign: 'center',
           padding: '1rem 0',
-          fontSize: '1rem',
+          fontSize: '1.5rem',
           marginTop: '2rem',
+          fontWeight: 'bold',
           borderTop: '1px solid #444',
         }}
       >

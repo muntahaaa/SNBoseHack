@@ -7,10 +7,13 @@ const Header = () => {
   const { isAuthenticated, logout } = useContext(AuthContext);
 
   return (
-    <header className="header">
-      <div className="logo">
+    <header className="header">      <div className="logo">
         <Link to="/">
-          <div className="logo-placeholder">LOGO</div>
+          <img 
+            src={process.env.PUBLIC_URL + "/images/logo.svg"} 
+            alt="SNBoseHack Logo" 
+            className="logo-image" 
+          />
         </Link>
       </div>
       <nav className="nav">
