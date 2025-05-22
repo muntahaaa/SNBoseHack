@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { fetchTTS } from '../../utils/ttsApi';
 
-const ChatMessage = ({ role, content, timestamp }) => {
-  const [audioState, setAudioState] = useState({
+const ChatMessage = ({ role, content, timestamp }) => {  const [audioState, setAudioState] = useState({
     isLoading: false,
     isPlaying: false,
     isPaused: false,
@@ -10,6 +9,21 @@ const ChatMessage = ({ role, content, timestamp }) => {
     error: null,
     isInitialized: false
   });
+  
+  const [selectedLanguage, setSelectedLanguage] = useState(null);
+  const [selectedVoice, setSelectedVoice] = useState(null);
+  
+  // Voice options for different languages
+  const VOICE_OPTIONS = {
+    "en-US": [
+      { id: "en-US-AriaNeural", name: "Aria (Female)" },
+      { id: "en-US-GuyNeural", name: "Guy (Male)" }
+    ],
+    "bn-IN": [
+      { id: "bn-IN-TanishaaNeural", name: "Tanishaa (Female)" },
+      { id: "bn-IN-BashkarNeural", name: "Bashkar (Male)" }
+    ]
+  };
   
   const audioRef = useRef(null);
   const playPromiseRef = useRef(null);  // Track the play promise
@@ -142,9 +156,8 @@ const ChatMessage = ({ role, content, timestamp }) => {
         return 'System';
     }
   };
-  
   // Initialize audio
-  const initializeAudio = async () => {
+  const initializeAudio = async (forcedLanguage = null, forcedVoice = null) => {
     console.log('Initialize audio called, current state:', audioState);
     
     if (audioState.audioUrl) {
@@ -167,12 +180,31 @@ const ChatMessage = ({ role, content, timestamp }) => {
     
     setAudioState(prev => ({ ...prev, isLoading: true }));
     
-    try {
+    try {      
       console.log('Fetching audio from TTS service');
+        
+      // Detect language - very simple detection for Bengali
+      // More sophisticated detection could be implemented
+      const hasScriptBengali = /[\u0980-\u09FF]/.test(content);
+      const language = forcedLanguage || (hasScriptBengali ? 'bn-IN' : 'en-US');
+      
+      // Select voice based on user selection or default
+      let voice;
+      if (forcedVoice) {
+        voice = forcedVoice;
+      } else if (selectedVoice && VOICE_OPTIONS[language]?.some(v => v.id === selectedVoice)) {
+        voice = selectedVoice;
+      } else {
+        // Default to first voice in the language
+        voice = VOICE_OPTIONS[language]?.[0]?.id;
+      }
+      
+      console.log(`Using language: ${language}, voice: ${voice}`);
+      
       const audioBlob = await fetchTTS({ 
         text: content, 
-        language: 'en-US', 
-        voice: 'en-US-AriaNeural' 
+        language: language, 
+        voice: voice 
       });
       console.log('Audio blob received, size:', audioBlob.size);
       const audioUrl = URL.createObjectURL(audioBlob);
@@ -440,33 +472,91 @@ const ChatMessage = ({ role, content, timestamp }) => {
         <span className="message-role">{getDisplayRole(role)}</span>
         <span className="message-time">{formatTime(timestamp)}</span>
       </div>
-      <div className="message-content">{content}</div>
-      
-      {isAIMessage && (
-        <div className="tts-controls">
+      <div className="message-content">{content}</div>      {isAIMessage && (
+        <div className="tts-controls" style={{ marginTop: "10px" }}>
           {!audioState.audioUrl ? (
-            <button 
-              className="hear-answer-btn" 
-              onClick={initializeAudio}
-              disabled={audioState.isLoading}
-              aria-label="Hear the answer"
-            >
-              {audioState.isLoading ? (
-                <span className="loading-dots">
-                  <span className="dot"></span>
-                  <span className="dot"></span>
-                  <span className="dot"></span>
-                </span>
-              ) : (
-                <span>🔊 Hear the answer</span>
-              )}
-            </button>
-          ) : (
-            <div className="audio-controls">
+            <div className="tts-selection" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>              <div className="language-selector" style={{ display: "flex", alignItems: "center" }}>
+                <label style={{ marginRight: "8px", fontSize: "0.9rem" }}>Language:</label>
+                <select 
+                  onChange={(e) => {
+                    const newLang = e.target.value; 
+                    setSelectedLanguage(newLang);
+                    // Reset voice when language changes
+                    if (VOICE_OPTIONS[newLang]?.length > 0) {
+                      setSelectedVoice(VOICE_OPTIONS[newLang][0].id);
+                    }
+                  }}
+                  value={selectedLanguage || ""}
+                  style={{
+                    padding: "4px 8px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc"
+                  }}
+                >
+                  <option value="">Auto Detect</option>
+                  <option value="en-US">English</option>
+                  <option value="bn-IN">Bengali</option>
+                </select>
+              </div>
+              
+              {selectedLanguage && (
+                <div className="voice-selector" style={{ display: "flex", alignItems: "center", marginTop: "8px" }}>
+                  <label style={{ marginRight: "8px", fontSize: "0.9rem" }}>Voice:</label>
+                  <select 
+                    onChange={(e) => setSelectedVoice(e.target.value)}
+                    value={selectedVoice || ""}
+                    style={{
+                      padding: "4px 8px",
+                      borderRadius: "4px", 
+                      border: "1px solid #ccc"
+                    }}
+                  >
+                    {VOICE_OPTIONS[selectedLanguage]?.map(voice => (
+                      <option key={voice.id} value={voice.id}>
+                        {voice.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}              <button 
+                className="hear-answer-btn" 
+                onClick={() => initializeAudio(selectedLanguage, selectedVoice)}
+                disabled={audioState.isLoading}
+                aria-label="Hear the answer"
+                style={{
+                  backgroundColor: "#4da3ff",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "16px",
+                  padding: "6px 12px",
+                  cursor: audioState.isLoading ? "wait" : "pointer",
+                  marginTop: "10px"
+                }}
+              >
+                {audioState.isLoading ? (
+                  <span className="loading-dots">
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                  </span>
+                ) : (
+                  <span>🔊 Hear the answer</span>
+                )}
+              </button>
+            </div>
+          ) : (            <div className="audio-controls" style={{ display: "flex", gap: "10px" }}>
               <button 
                 className={`audio-control-btn ${audioState.isPlaying ? 'playing' : 'paused'}`}
                 onClick={togglePlayPause}
                 aria-label={audioState.isPlaying ? "Pause" : "Play"}
+                style={{
+                  backgroundColor: audioState.isPlaying ? "#3b8eef" : "#4da3ff",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "16px",
+                  padding: "6px 12px",
+                  cursor: "pointer"
+                }}
               >
                 {audioState.isPlaying ? "⏸️ Pause" : "▶️ Play"}
               </button>
@@ -474,8 +564,15 @@ const ChatMessage = ({ role, content, timestamp }) => {
                 className="audio-control-btn reset-btn" 
                 onClick={cleanupAudio}
                 aria-label="Reset audio"
-              >
-                🔄 Reset
+                style={{
+                  backgroundColor: "#f0f0f0",
+                  color: "#666",
+                  border: "none",
+                  borderRadius: "16px",
+                  padding: "6px 12px",
+                  cursor: "pointer"
+                }}
+              >🔄 Reset
               </button>
             </div>
           )}

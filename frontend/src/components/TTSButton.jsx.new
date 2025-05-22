@@ -3,17 +3,8 @@ import { fetchTTS } from "../utils/ttsApi";
 
 // Voice options for different languages
 const VOICE_OPTIONS = {
-  "en-US": [
-    { id: "en-US-AriaNeural", name: "Aria (Female)", gender: "female" },
-    { id: "en-US-GuyNeural", name: "Guy (Male)", gender: "male" },
-    { id: "en-US-JennyNeural", name: "Jenny (Female)", gender: "female" },
-    { id: "en-US-AnaNeural", name: "Ana (Female)", gender: "female" }
-  ],
-  "bn-IN": [
-    { id: "bn-IN-TanishaaNeural", name: "Tanishaa (Female)", gender: "female" },
-    { id: "bn-IN-BashkarNeural", name: "Bashkar (Male)", gender: "male" },
-    { id: "bn-IN-PrabhatNeural", name: "Prabhat (Male)", gender: "male" }
-  ]
+  "en-US": "en-US-AriaNeural",
+  "bn-IN": "bn-IN-TanishaaNeural",  // Bengali voice
 };
 
 export default function TTSButton({ 
@@ -23,15 +14,12 @@ export default function TTSButton({
   showControls = true, 
   buttonStyle = {}, 
   showLanguageSelector = false,
-  showVoiceSelector = false,
   ...props 
 }) {
   // Auto-select voice based on language if not specified
   const [selectedLanguage, setSelectedLanguage] = useState(language);
   const [selectedVoice, setSelectedVoice] = useState(
-    voice || 
-    (VOICE_OPTIONS[language] && VOICE_OPTIONS[language][0].id) || 
-    (VOICE_OPTIONS["en-US"] && VOICE_OPTIONS["en-US"][0].id)
+    voice || VOICE_OPTIONS[language] || VOICE_OPTIONS["en-US"]
   );
   
   const [audioState, setAudioState] = useState({
@@ -69,30 +57,13 @@ export default function TTSButton({
       }
     };
   }, [audioState.audioUrl]);
+
   // Handle language change
   const handleLanguageChange = (e) => {
     const newLanguage = e.target.value;
     setSelectedLanguage(newLanguage);
-    
     // Auto-select the appropriate voice for the language
-    if (VOICE_OPTIONS[newLanguage] && VOICE_OPTIONS[newLanguage].length > 0) {
-      setSelectedVoice(VOICE_OPTIONS[newLanguage][0].id);
-      console.log(`Language changed to ${newLanguage}, selected voice: ${VOICE_OPTIONS[newLanguage][0].id}`);
-    } else {
-      setSelectedVoice(VOICE_OPTIONS["en-US"][0].id);
-      console.log(`No voices found for ${newLanguage}, using default English voice`);
-    }
-    
-    // Reset audio if it was already playing
-    if (audioState.audioUrl) {
-      resetAudio();
-    }
-  };
-  
-  // Handle voice change
-  const handleVoiceChange = (e) => {
-    const newVoice = e.target.value;
-    setSelectedVoice(newVoice);
+    setSelectedVoice(VOICE_OPTIONS[newLanguage] || VOICE_OPTIONS["en-US"]);
     
     // Reset audio if it was already playing
     if (audioState.audioUrl) {
@@ -316,6 +287,7 @@ export default function TTSButton({
       });
     }
   };
+
   // If simple mode (no controls)
   if (!showControls) {
     return (
@@ -337,27 +309,6 @@ export default function TTSButton({
             </select>
           </div>
         )}
-        
-        {showVoiceSelector && (
-          <div style={{ marginBottom: "10px" }}>
-            <label style={{ marginRight: "8px" }}>Voice:</label>
-            <select 
-              value={selectedVoice} 
-              onChange={handleVoiceChange}
-              style={{
-                padding: "4px 8px",
-                borderRadius: "8px",
-                border: "1px solid #ccc"
-              }}
-            >
-              {VOICE_OPTIONS[selectedLanguage]?.map(voice => (
-                <option key={voice.id} value={voice.id}>
-                  {voice.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
         <button 
           onClick={handleSpeak} 
           disabled={audioState.isLoading} 
@@ -369,9 +320,10 @@ export default function TTSButton({
       </div>
     );
   }
+
   // With audio controls
   return (
-    <div className="tts-button-container" style={{ display: "flex", flexDirection: (showLanguageSelector || showVoiceSelector) ? "column" : "row", gap: "8px", ...props.containerStyle }}>
+    <div className="tts-button-container" style={{ display: "flex", flexDirection: showLanguageSelector ? "column" : "row", gap: "8px", ...props.containerStyle }}>
       {showLanguageSelector && (
         <div style={{ marginBottom: "10px" }}>
           <label style={{ marginRight: "8px" }}>Language:</label>
@@ -386,27 +338,6 @@ export default function TTSButton({
           >
             <option value="en-US">English</option>
             <option value="bn-IN">Bengali</option>
-          </select>
-        </div>
-      )}
-      
-      {showVoiceSelector && (
-        <div style={{ marginBottom: "10px" }}>
-          <label style={{ marginRight: "8px" }}>Voice:</label>
-          <select 
-            value={selectedVoice} 
-            onChange={handleVoiceChange}
-            style={{
-              padding: "4px 8px",
-              borderRadius: "8px",
-              border: "1px solid #ccc"
-            }}
-          >
-            {VOICE_OPTIONS[selectedLanguage]?.map(voice => (
-              <option key={voice.id} value={voice.id}>
-                {voice.name}
-              </option>
-            ))}
           </select>
         </div>
       )}

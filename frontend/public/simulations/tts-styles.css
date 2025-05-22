@@ -1,0 +1,41 @@
+/* This file contains the TTS styles for the Bengali language education project */
+@keyframes loading-dots {
+    0%, 20% {
+        content: "";
+    }
+    40% {
+        content: ".";
+    }
+    60% {
+        content: "..";
+    }
+    80%, 100% {
+        content: "...";
+    }
+}
+
+.loading-dots::after {
+    content: "";
+    animation: loading-dots 1.5s infinite;
+    display: inline-block;
+}
+
+#ttsButton {
+    transition: background-color 0.3s, transform 0.2s;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
+#ttsButton:hover {
+    background-color: #3e8e41 !important;
+    transform: translateY(-1px);
+}
+
+#ttsButton:active {
+    transform: scale(0.98);
+}
+
+#tts-status {
+    transition: opacity 0.3s;
+}

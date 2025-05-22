@@ -786,14 +786,297 @@
         document.getElementById('popup').style.display = 'block';
         }
 
-        function closePopup() {
-            document.getElementById('popup').style.display = 'none';
-        }
+        
+function closePopup() {
+    document.getElementById('popup').style.display = 'none';
+    // Stop audio if playing
+    if (window.ttsAudio) {
+        window.ttsAudio.pause();
+        window.ttsAudio = null;
+    }
+}
 
         document.getElementById('learnButton').addEventListener('click', showPopup);
-    </script>
+    
+// Add TTS button event listener when document is ready
+document.addEventListener('DOMContentLoaded', function() {
+    const ttsButton = document.getElementById('ttsButton');
+    if (ttsButton) {
+        ttsButton.addEventListener('click', speakText);
+    }
+});
+    
+// TTS functionality
+async function speakText() {
+    const ttsButton = document.getElementById('ttsButton');
+    const ttsStatus = document.getElementById('tts-status');
+    const textToSpeak = document.getElementById('popup-content').textContent;
+    
+    // If audio is already playing, stop it
+    if (window.ttsAudio && !window.ttsAudio.paused) {
+        ttsStatus.textContent = 'বন্ধ করা হচ্ছে...';
+        window.ttsAudio.pause();
+        window.ttsAudio = null;
+        ttsButton.style.backgroundColor = '#4CAF50';
+        ttsButton.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+            শুনুন
+        `;
+        ttsStatus.textContent = '';
+        return;
+    }
+    
+    try {
+        ttsButton.style.backgroundColor = '#ff9800';
+        ttsButton.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+            <span class="loading-dots">লোড হচ্ছে</span>
+        `;
+        ttsStatus.textContent = '';
+        
+        // Call the backend TTS API
+        const response = await fetch('http://localhost:5000/api/tts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                text: textToSpeak,
+                language: 'bn-IN',  // Bengali language code
+                voice: 'bn-IN-TanishaaNeural'  // Bengali voice
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`TTS request failed: ${response.status} ${response.statusText}`);
+        }
+        
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        ttsStatus.textContent = '';
+        
+        // Create and play audio
+        const audio = new Audio(audioUrl);
+        window.ttsAudio = audio;
+        
+        audio.addEventListener('ended', () => {
+            ttsButton.style.backgroundColor = '#4CAF50';
+            ttsButton.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+                শুনুন
+            `;
+            ttsStatus.textContent = '';
+            window.ttsAudio = null;
+            
+            // Clean up
+            URL.revokeObjectURL(audioUrl);
+        });
+        
+        audio.addEventListener('error', (e) => {
+            console.error('Audio playback error:', e);
+            ttsButton.style.backgroundColor = '#f44336';
+            ttsButton.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                </svg>
+                ত্রুটি হয়েছে
+            `;
+            
+            // Clean up
+            URL.revokeObjectURL(audioUrl);
+            
+            setTimeout(() => {
+                ttsButton.style.backgroundColor = '#4CAF50';
+                ttsButton.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                        <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    </svg>
+                    শুনুন
+                `;
+                ttsStatus.textContent = '';
+            }, 3000);
+        });
+        
+        ttsButton.style.backgroundColor = '#ff5722';
+        ttsButton.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                <rect x="6" y="4" width="4" height="16"></rect>
+                <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+            থামান
+        `;
+        await audio.play();
+    } catch (error) {
+        console.error('TTS API error:', error);
+        
+        // Try using browser's built-in speech synthesis as fallback
+        if (window.speechSynthesis) {
+            try {
+                ttsStatus.textContent = '';
+                ttsButton.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                        <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+                        <circle cx="18" cy="12" r="4" fill="currentColor"></circle>
+                    </svg>
+                    ব্রাউজারে চলছে
+                `;
+                
+                // Find Bengali voice if available
+                const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                utterance.lang = 'bn-IN';
+                
+                // Try to find a Bengali voice
+                const voices = speechSynthesis.getVoices();
+                const bengaliVoice = voices.find(voice => 
+                    voice.lang.includes('bn') || 
+                    voice.name.toLowerCase().includes('bengali')
+                );
+                
+                if (bengaliVoice) {
+                    utterance.voice = bengaliVoice;
+                }
+                
+                utterance.onend = () => {
+                    ttsButton.style.backgroundColor = '#4CAF50';
+                    ttsButton.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                            <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                        শুনুন
+                    `;
+                    ttsStatus.textContent = '';
+                };
+                
+                utterance.onerror = () => {
+                    ttsButton.style.backgroundColor = '#f44336';
+                    ttsButton.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                            <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                        </svg>
+                        ত্রুটি হয়েছে
+                    `;
+                    setTimeout(() => {
+                        ttsButton.style.backgroundColor = '#4CAF50';
+                        ttsButton.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                                <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+                                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                            </svg>
+                            শুনুন
+                        `;
+                        ttsStatus.textContent = '';
+                    }, 3000);
+                };
+                
+                ttsButton.style.backgroundColor = '#ff5722';
+                speechSynthesis.speak(utterance);
+            } catch (synthError) {
+                console.error('Speech synthesis error:', synthError);
+                ttsButton.style.backgroundColor = '#f44336';
+                ttsButton.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                        <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                    </svg>
+                    সমর্থিত নয়
+                `;
+                setTimeout(() => {
+                    ttsButton.style.backgroundColor = '#4CAF50';
+                    ttsButton.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                            <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                        শুনুন
+                    `;
+                    ttsStatus.textContent = '';
+                }, 3000);
+            }
+        } else {
+            ttsButton.style.backgroundColor = '#f44336';
+            ttsButton.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                </svg>
+                সমর্থিত নয়
+            `;
+            setTimeout(() => {
+                ttsButton.style.backgroundColor = '#4CAF50';
+                ttsButton.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                        <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    </svg>
+                    শুনুন
+                `;
+                ttsStatus.textContent = '';
+            }, 3000);
+        }
+    }
+}
+</script>
+
+<style>
+    @keyframes loading-dots {
+        0%, 20% { content: ""; }
+        40% { content: "."; }
+        60% { content: ".."; }
+        80%, 100% { content: "..."; }
+    }
+    
+    .loading-dots::after {
+        content: "";
+        animation: loading-dots 1.5s infinite;
+        display: inline-block;
+    }
+    
+    #ttsButton {
+        transition: background-color 0.3s, transform 0.2s;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+    }
+    
+    #ttsButton:hover {
+        background-color: #3e8e41 !important;
+        transform: translateY(-1px);
+    }
+    
+    #ttsButton:active {
+        transform: scale(0.98);
+    }
+    
+    #tts-status {
+        transition: opacity 0.3s;
+    }
+</style>
     <div id="popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border: 1px solid black; z-index: 1001; max-width: 500px; text-align: justify;">
-    <p>সংখ্যারেখা হলো একটি সরল রেখা, যেখানে বিভিন্ন সংখ্যা সঠিক ক্রমে স্থাপন করা হয়। সাধারণত এই রেখার মাঝখানে ০ থাকে, তার ডানদিকে ধনাত্মক সংখ্যা এবং বামদিকে ঋণাত্মক সংখ্যা সাজানো থাকে। সংখ্যারেখার সাহায্যে আমরা সংখ্যা গুলোকে সহজে বুঝতে পারি, যোগ-বিয়োগ করতে পারি এবং ধন ও ঋণ উভয় ধরনের সংখ্যার মান নির্ণয় করতে পারি। যেমন, যদি তুমি সংখ্যারেখায় ২ থেকে ৫ পর্যন্ত পা বাড়াও, তাহলে মোট ৩ ধাপ এগিয়েছে বোঝা যাবে। সংখ্যারেখা গাণিতিক ধারণাগুলো আরও স্পষ্ট ও সহজ করে তোলে।</p>
-    <button onclick="closePopup()">বন্ধ করুন</button>
+    <p id="popup-content">সংখ্যারেখা হলো একটি সরল রেখা, যেখানে বিভিন্ন সংখ্যা সঠিক ক্রমে স্থাপন করা হয়। সাধারণত এই রেখার মাঝখানে ০ থাকে, তার ডানদিকে ধনাত্মক সংখ্যা এবং বামদিকে ঋণাত্মক সংখ্যা সাজানো থাকে। সংখ্যারেখার সাহায্যে আমরা সংখ্যা গুলোকে সহজে বুঝতে পারি, যোগ-বিয়োগ করতে পারি এবং ধন ও ঋণ উভয় ধরনের সংখ্যার মান নির্ণয় করতে পারি। যেমন, যদি তুমি সংখ্যারেখায় ২ থেকে ৫ পর্যন্ত পা বাড়াও, তাহলে মোট ৩ ধাপ এগিয়েছে বোঝা যাবে। সংখ্যারেখা গাণিতিক ধারণাগুলো আরও স্পষ্ট ও সহজ করে তোলে।</p>
+    
+<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+    <button id="ttsButton" style="display: flex; align-items: center; background-color: #4CAF50; color: white; border: none; border-radius: 5px; padding: 8px 12px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);" title="শুনুন" aria-label="Read aloud">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+            <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        </svg>
+        শুনুন
+    </button>
+    <div id="tts-status" style="color: #666; font-size: 14px; min-height: 20px; flex-grow: 1; text-align: center;"></div>
+    <button onclick="closePopup()" style="background-color: #f44336; color: white; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer;">বন্ধ করুন</button>
+</div>
 </body>
 </html>
