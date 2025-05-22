@@ -363,6 +363,50 @@
         scene.add(ambientLight);
         
         const directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
+        
+        // Background image loader
+const textureLoader = new THREE.TextureLoader();
+
+// Function to update background based on planet
+function updateBackground(planet) {
+    const imageMap = {
+        'Earth': '../../images/earth-bg.jpg',
+        'Moon': '../../images/moon-bg.jpg',
+        'Mars': '../../images/mars-bg.avif',
+        'Jupiter': '../../images/jupiter-bg.jpg'
+    };
+    
+    if (imageMap[planet]) {
+        textureLoader.load(
+            imageMap[planet],
+            function(texture) {
+                scene.background = texture;
+            },
+            undefined,
+            function(error) {
+                console.warn(`Failed to load ${planet} background image:`, error);
+                // Fallback to colored background based on planet
+                const fallbackColors = {
+                    'Earth': 0x87CEEB,  // Sky blue
+                    'Moon': 0x696969,   // Dim gray
+                    'Mars': 0xCD5C5C,   // Indian red
+                    'Jupiter': 0xDAA520  // Golden rod
+                };
+                scene.background = new THREE.Color(fallbackColors[planet] || 0xf0f0f0);
+            }
+        );
+    }
+}
+
+// Function to get planet name based on gravity value
+function getPlanetFromGravity(gravityValue) {
+    if (Math.abs(gravityValue - 9.8) < 0.1) return 'Earth';
+    if (Math.abs(gravityValue - 1.6) < 0.1) return 'Moon';
+    if (Math.abs(gravityValue - 3.7) < 0.1) return 'Mars';
+    if (Math.abs(gravityValue - 24.8) < 0.1) return 'Jupiter';
+    return null;
+}
+
         directionalLight.position.set(5, 10, 7);
         scene.add(directionalLight);
         
@@ -471,7 +515,7 @@
             });
         });
         
-        // Gravity slider
+        // Gravity slider with background update
         gravitySlider.addEventListener('input', () => {
             if (isQuizMode) return;
             
@@ -479,6 +523,12 @@
             gravityValue.textContent = gravity.toFixed(1) + ' m/s²';
             
             updateLocationText();
+            
+            // Update background based on gravity value
+            const planet = getPlanetFromGravity(gravity);
+            if (planet) {
+                updateBackground(planet);
+            }
             
             if (isOnScale && currentBlock) {
                 const mass = currentBlock.userData.mass;
@@ -488,11 +538,12 @@
         });
         
         // Preset gravities
+        // Preset gravities with background updates
         const presetButtons = [
-            { value: 1.6, label: 'Moon (1.6 m/s²)' },
-            { value: 3.7, label: 'Mars (3.7 m/s²)' },
-            { value: 9.8, label: 'Earth (9.8 m/s²)' },
-            { value: 24.8, label: 'Jupiter (24.8 m/s²)' }
+            { value: 1.6, label: 'Moon (1.6 m/s²)', planet: 'Moon' },
+            { value: 3.7, label: 'Mars (3.7 m/s²)', planet: 'Mars' },
+            { value: 9.8, label: 'Earth (9.8 m/s²)', planet: 'Earth' },
+            { value: 24.8, label: 'Jupiter (24.8 m/s²)', planet: 'Jupiter' }
         ];
         
         const presetsDiv = document.querySelector('.preset-buttons');
@@ -509,8 +560,28 @@
                 gravitySlider.value = preset.value;
                 gravity = preset.value;
                 gravityValue.textContent = gravity.toFixed(1) + ' m/s²';
-                locationText.textContent = `Location: ${preset.label.split(' ')[0]}`;
+                if (preset?.planet) {
+                    switch (preset.planet.toLowerCase()) {
+                        case 'earth':
+                            locationText.textContent = 'Location: Earth (পৃথিবী)';
+                            break;
+                        case 'moon':
+                            locationText.textContent = 'Location: Moon (চাঁদ)';
+                            break;
+                        case 'mars':
+                            locationText.textContent = 'Location: Mars (বুধ গ্রহ)';
+                            break;
+                        case 'jupiter':
+                            locationText.textContent = 'Location: Jupiter (বৃহস্পতি গ্রহ)';
+                            break;
+                        default:
+                            locationText.textContent = `Location: Custom`;
+                    }
+                }
                 
+                // Update background based on selected planet
+                updateBackground(preset.planet);
+
                 if (isOnScale && currentBlock) {
                     const mass = currentBlock.userData.mass;
                     const weight = mass * gravity;
@@ -696,7 +767,11 @@
             const gravityValue = gravities[Math.floor(Math.random() * gravities.length)];
             
             correctAnswer = (mass * gravityValue).toFixed(1);
-            const location = gravityValue === 9.8 ? 'Earth' : gravityValue === 1.6 ? 'Moon' : gravityValue === 3.7 ? 'Mars' : 'Jupiter';
+            const location = gravityValue === 9.8 ? 'Earth' : gravityValue === 1.6 ? 'Moon(চাঁদ)' : gravityValue === 3.7 ? 'Mars' : 'Jupiter';
+            
+            // Update background for quiz question
+            updateBackground(location);
+            
             quizQuestion.textContent = `What is the weight of a ${mass}kg block on ${location} (gravity = ${gravityValue} m/s²)?`;
             
             // Generate multiple-choice options
