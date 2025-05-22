@@ -1,4 +1,4 @@
-# SNBoseHack - Interactive Educational Platform
+# শিখন৩৬০ - Interactive Educational Platform
 
 A modern, interactive educational platform featuring Physics, Mathematics, and Chemistry simulations with AI chatbot assistance, designed to make learning engaging and accessible.
 
