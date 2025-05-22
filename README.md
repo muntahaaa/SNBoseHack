@@ -30,9 +30,12 @@ The chatbot includes a "Hear the answer" button that allows users to listen to t
 - **Reset**: Button to clear the current audio and free up resources
 
 ### 🔬 Research Desk
-- Platform for student research collaborations
-- Challenges and volunteer opportunities for hands-on learning
-- Resource sharing and community interaction
+- **Collaborative Projects**: Platform for students to work on scientific research projects
+- **Research Challenges**: Weekly and monthly challenges tied to curriculum topics
+- **Volunteer Opportunities**: Hands-on learning through scientific outreach programs
+- **Resource Sharing**: Access to scientific papers, educational materials, and experiments
+- **Community Forums**: Interactive spaces for discussion and idea exchange
+- **Mentor Connections**: Connect with researchers from S.N. Bose National Centre
 
 ## 🛠️ Technology Stack
 
@@ -40,15 +43,18 @@ The chatbot includes a "Hear the answer" button that allows users to listen to t
 - React.js with React Router for navigation
 - Modern CSS with responsive design principles
 - Interactive animations and visualizations
+- Responsive UI components for seamless experience across devices
 
 ### Backend
 - Node.js with Express framework
 - MongoDB for data storage
 - JWT for authentication
+- RESTful API architecture for client-server communication
 
 ### AI & Speech
 - Google's Generative AI for the chatbot functionality
 - Microsoft Azure's Text-to-Speech API for audio responses
+- Cloudinary for media management
 
 ## 📊 Educational Approach
 
@@ -57,6 +63,8 @@ Our platform focuses on:
 - **AI-Assisted Tutoring**: Personalized help when needed
 - **Multilingual Support**: Content in multiple languages, including Bengali
 - **Accessibility**: Text-to-speech features for different learning needs
+- **Research-Based Learning**: Encouraging scientific inquiry through the Research Desk
+- **Collaborative Learning**: Building teamwork through group projects and forums
 
 ## 💻 Installation and Setup
 
