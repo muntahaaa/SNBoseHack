@@ -14,6 +14,7 @@ const authRoutes = require('./routes/authRoutes');
 const researchRoutes = require('./routes/researchRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const ttsRoutes = require("./routes/ttsRoutes");
+const volunteerRoutes = require('./routes/volunteerRoutes');
 // Initialize Express app
 
 const app = express();
@@ -30,10 +31,12 @@ app.use(express.urlencoded({ extended: false }));
 
 // Static files
 app.use('/videos', express.static(path.join(__dirname, 'public', 'videos')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/users', authRoutes);
 app.use('/api/research-desk', researchRoutes);
+app.use('/api/volunteer', volunteerRoutes);
 app.use('/api', chatRoutes);
 app.use('/api', ttsRoutes);
 
