@@ -448,6 +448,7 @@
             <p>• নীল লিটমাস কাগজ এসিডিক দ্রবণে লাল বর্ণ ধারণ করে এবং ক্ষারীয় দ্রবণে অপরিবর্তনশীল থাকে</p>
             <p>• লাল লিটমাস কাগজ ক্ষারীয় দ্রবণে নীল বর্ণ ধারণ করে এবং এসিডিক দ্রবণে অপরিবর্তনশীল থাকে</p>
             <p>• লিটমাস কাগজের রঙ পরিবর্তন হলে দ্রবণের এসিডিক বা ক্ষারীয় প্রকৃতি বোঝা যায়</p>
+            <p class="result-message" id="result-message">সলুশন সিলেক্ট করে লিটমাস কাগজ টেস্ট করুন</p>
         </div>
         
         <button class="quiz-toggle-btn" id="quiz-toggle-btn" aria-label="Toggle quiz mode">Quiz Mode: Off</button>
@@ -749,7 +750,7 @@
                 }
                 
                 // Add distractors
-                const possibleOptions = ['Red', 'Blue', 'No Change', litmusType === 'blue' ? 'Green' : 'Yellow'];
+                const possibleOptions = ['Red', 'Blue', 'Black', litmusType === 'blue' ? 'Green' : 'Yellow'];
                 const filteredOptions = possibleOptions.filter(opt => opt !== correctAnswer);
                 while (options.length < 4) {
                     const randomOption = filteredOptions[Math.floor(Math.random() * filteredOptions.length)];
