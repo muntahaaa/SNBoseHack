@@ -6,8 +6,8 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 // Set up Axios defaults
-//axios.defaults.baseURL = 'https://shikhon360-server.onrender.com';
-axios.defaults.baseURL = 'http://localhost:5000'; // Change to your backend
+axios.defaults.baseURL = 'https://shikhon360-server.onrender.com';
+//axios.defaults.baseURL = 'http://localhost:5000'; // Change to your backend
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 // Add request interceptor for handling authentication
